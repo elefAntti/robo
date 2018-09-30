@@ -5,4 +5,5 @@ NOTE: The actual kinematic model for computing the wheel commands hasn ot yet be
 
 ## You need
 rxpy: pip install rx
+
 qt5: pip install pyqt5
