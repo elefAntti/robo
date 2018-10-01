@@ -42,20 +42,6 @@ class PivotCommand(namedtuple("PivotCommand", ["angularVelocity"])):
     def pivot(self):
         return True
 
-
-class Pose:
-    def __init__(self, x, y, heading):
-        self.x = x
-        self.y = y
-        self.heading = heading
-
-    def __copy__(self):
-        return type(self)(self.x, self.y, self.heading)
-
-    def __repr__(self):
-        return "Pose({}, {}, {})".format(self.x, self.y, self.heading)
-
-
 WheelCommand = namedtuple("WheelCommand", ["left_angular_vel", "right_angular_vel"])
 
 class KinematicModel:
