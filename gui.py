@@ -2,16 +2,13 @@ import sys
 
 import rx
 from rx.subjects import BehaviorSubject
-from rx.concurrency import QtScheduler
 from PyQt5 import QtCore
 from PyQt5.QtCore import QObject, QUrl, pyqtSignal, pyqtSlot, pyqtProperty
 from PyQt5.QtQml import QQmlApplicationEngine
 from PyQt5.QtWidgets import QApplication
 
+from vec2 import Transform, Vec2
 import kinematics as kine
-
-scheduler = QtScheduler(QtCore)
-
 
 class Backend(QObject):
     def __init__(self, parent=None):
@@ -100,10 +97,10 @@ class GuiRobot(QObject):
 def simulateRobot(commands):
     dt = 30
     return rx.Observable.interval(dt)\
-        .flat_map(lambda _: commands.first())\
+        .with_latest_from(commands, lambda idx, command: command)\
         .scan(
             lambda pose, command: kine.predictPose(pose, command, dt/1000),
-            kine.Pose(0, 0, 0)
+            Transform(heading = 0, offset=Vec2(0, 0))
         )
 
 app = QApplication(sys.argv)

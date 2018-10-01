@@ -1,17 +1,10 @@
+from collections import namedtuple
 from copy import copy
 from math import sin, cos
+from vec2 import Vec2, Transform
 
-
-class Command:
-    def __init__(self, velocity, curvature):
-        self.velocity = velocity
-        self.curvature = curvature
-
-    def __copy__(self):
-        return type(self)(self.velocity, self.curvature)
-
-    def __repr__(self):
-        return "Command({}, {})".format(self.velocity, self.curvature)
+class Command(namedtuple("command", ["velocity", "curvature"])):
+    __slots__ = ()
 
     @property
     def straight(self):
@@ -30,12 +23,8 @@ class Command:
         return False
 
 
-class PivotCommand:
-    def __init__(self, angular_vel):
-        self.angularVelocity = angular_vel
-
-    def __copy__(self):
-        return type(self)(self.angularVelocity)
+class PivotCommand(namedtuple("PivotCommand", ["angularVelocity"])):
+    __slots__ = ()
 
     @property
     def straight(self):
@@ -67,11 +56,7 @@ class Pose:
         return "Pose({}, {}, {})".format(self.x, self.y, self.heading)
 
 
-class WheelCommand:
-    def __init__(self, left_angular_vel, right_angular_vel):
-        self.left_angular_vel = left_angular_vel
-        self.right_angular_vel = right_angular_vel
-
+WheelCommand = namedtuple("WheelCommand", ["left_angular_vel", "right_angular_vel"])
 
 class KinematicModel:
     def __init__(self, axel_width, left_wheel_r, right_wheel_r):
@@ -89,7 +74,7 @@ class KinematicModel:
         else:
             left_radius = command.radius - self.axel_width / 2
             right_radius = command.radius + self.axel_width / 2
-            left_vel = left_radius * commmand.angularVelocity
+            left_vel = left_radius * command.angularVelocity
             right_vel = right_radius * command.angularVelocity
         left_angular_vel = left_vel / self.left_wheel_r
         right_angular_vel = right_vel / self.right_wheel_r
@@ -113,17 +98,23 @@ class KinematicModel:
 
 
 def predictPose(pose, command, time):
-    new_pose = copy(pose)
     if command.pivot:
-        new_pose.heading += command.angularVelocity * time
+        return Transform(
+            heading = pose.heading + command.angularVelocity * time,
+            offset = pose.offset)
     elif command.straight:
         distance = command.velocity * time
-        new_pose.x += cos(pose.heading) * distance
-        new_pose.y += sin(pose.heading) * distance
+        return Transform(
+            heading = pose.heading, 
+            offset = pose.offset + Vec2.fromPolar(pose.heading, distance))
     else:
-        new_pose.heading += command.angularVelocity * time
-        new_pose.x += (sin(new_pose.heading) - sin(pose.heading)) \
-            * command.radius
-        new_pose.y += (-cos(new_pose.heading) + cos(pose.heading)) \
-            * command.radius
-    return new_pose
+        new_heading = pose.heading + command.angularVelocity * time
+        displacement = Vec2(
+            x = (sin(new_heading) - sin(pose.heading)),
+            y = (-cos(new_heading) + cos(pose.heading))
+        ) * command.radius
+        print(displacement)
+    return Transform(
+        heading=new_heading,
+        offset=pose.offset + displacement
+    )
