@@ -99,7 +99,6 @@ def predictPose(pose, command, time):
             x = (sin(new_heading) - sin(pose.heading)),
             y = (-cos(new_heading) + cos(pose.heading))
         ) * command.radius
-        print(displacement)
     return Transform(
         heading=new_heading,
         offset=pose.offset + displacement
