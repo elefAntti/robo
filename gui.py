@@ -16,7 +16,6 @@ scheduler = QtScheduler(QtCore)
 class Backend(QObject):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.robot = None
         self._commandSubject = BehaviorSubject(kine.Command(0, 0))
 
     @pyqtSlot()
@@ -106,7 +105,6 @@ def simulateRobot(initial_pose, commands, timestep_ms=30, scheduler=scheduler):
 app = QApplication(sys.argv)
 backend = Backend()
 robot = GuiRobot()
-backend.robot = robot
 
 backend.commands.subscribe(lambda command: print("Received "+str(command)))
 
