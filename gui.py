@@ -11,6 +11,8 @@ from PyQt5.QtWidgets import QApplication
 from vec2 import Transform, Vec2
 import kinematics as kine
 
+scheduler = QtScheduler(QtCore)
+
 class Backend(QObject):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -94,26 +96,21 @@ class GuiRobot(QObject):
         self.heading = pose.heading
         self._headingChanged.emit()
 
-
-def simulateRobot(commands):
-    dt = 30
-    return rx.Observable.interval(dt, scheduler=scheduler)\
+def simulateRobot(initial_pose, commands, timestep_ms=30, scheduler=scheduler):
+    return rx.Observable.interval(timestep_ms, scheduler=scheduler)\
         .with_latest_from(commands, lambda idx, command: command)\
         .scan(
-            lambda pose, command: kine.predictPose(pose, command, dt/1000),
-            Transform(heading = 0, offset=Vec2(0, 0))
-        )
+            lambda pose, command: kine.predictPose(pose, command, timestep_ms/1000),
+            initial_pose)
 
-scheduler = QtScheduler(QtCore)
 app = QApplication(sys.argv)
 backend = Backend()
 robot = GuiRobot()
-robot.heading = 0.5
 backend.robot = robot
 
 backend.commands.subscribe(lambda command: print("Received "+str(command)))
 
-simulateRobot(backend.commands) \
+simulateRobot(Transform.identity(), backend.commands) \
     .subscribe(robot.setPose)
 
 engine = QQmlApplicationEngine()
