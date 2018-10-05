@@ -55,12 +55,16 @@ class GuiRobot(QObject):
     _xChanged = pyqtSignal()
     _yChanged = pyqtSignal()
     _headingChanged = pyqtSignal()
+    _leftVelChanged = pyqtSignal()
+    _rightVelChanged = pyqtSignal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
         self._x = 0
         self._y = 0
         self._heading = 0
+        self._left_wheel_vel = 0
+        self._right_wheel_vel = 0
 
     @pyqtProperty('QVariant', notify=_xChanged)
     def x(self):
@@ -89,11 +93,25 @@ class GuiRobot(QObject):
         self._heading = value
         self._headingChanged.emit()
 
+    @pyqtProperty('QVariant', notify=_leftVelChanged)
+    def leftWheelVel(self):
+        return self._left_wheel_vel
+
+    @pyqtProperty('QVariant', notify=_rightVelChanged)
+    def rightWheelVel(self):
+        return self._right_wheel_vel
+
     def setPose(self, pose):
         self.x = pose.x
         self.y = pose.y
         self.heading = pose.heading
         self._headingChanged.emit()
+
+    def setWheelCommand(self, command):
+        self._left_wheel_vel = command.left_angular_vel
+        self._right_wheel_vel = command.right_angular_vel
+        self._leftVelChanged.emit()
+        self._rightVelChanged.emit()
 
 def simulateRobot(initial_pose, commands, timestep_ms=30, scheduler=scheduler):
     return rx.Observable.interval(timestep_ms, scheduler=scheduler)\
@@ -108,8 +126,12 @@ robot = GuiRobot()
 
 backend.commands.subscribe(lambda command: print("Received "+str(command)))
 
-simulateRobot(Transform.identity(), backend.commands) \
-    .subscribe(robot.setPose)
+simulation = simulateRobot(Transform.identity(), backend.commands)
+simulation.subscribe(robot.setPose)
+
+kinematics = kine.KinematicModel(axel_width = 0.2, left_wheel_r = 0.03, right_wheel_r = 0.03)
+backend.commands.map(kinematics.computeWheelCommand)\
+    .subscribe(robot.setWheelCommand)
 
 engine = QQmlApplicationEngine()
 engine.rootContext().setContextProperty("backend", backend)

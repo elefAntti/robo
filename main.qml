@@ -1,58 +1,75 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.1
+import QtCharts 2.0
 
 ApplicationWindow {
     id: window
     visible: true
-    width: 640
-    height: 480
+    width: 1000
+    height: 600
 
-	Column
+	Row
 	{
-		Row
+		Column
 		{
-			Button
+			Row
 			{
-				text: "Stop"
-				onClicked: backend.stop()
+				Button
+				{
+					text: "Stop"
+					onClicked: backend.stop()
+				}
+				Button
+				{
+					text: "Forward"
+					onClicked: backend.forward()
+				}
+				Button
+				{
+					text: "Backward"
+					onClicked: backend.backward()
+				}
+				Button
+				{
+					text: "Left"
+					onClicked: backend.left()
+				}
+				Button
+				{
+					text: "Right"
+					onClicked: backend.right()
+				}
+				Button
+				{
+					text: "Pivot left"
+					onClicked: backend.pivotLeft()
+				}
+				Button
+				{
+					text: "Pivot right"
+					onClicked: backend.pivotRight()
+				}
 			}
-			Button
+
+			RoboView
 			{
-				text: "Forward"
-				onClicked: backend.forward()
-			}
-			Button
-			{
-				text: "Backward"
-				onClicked: backend.backward()
-			}
-			Button
-			{
-				text: "Left"
-				onClicked: backend.left()
-			}
-			Button
-			{
-				text: "Right"
-				onClicked: backend.right()
-			}
-			Button
-			{
-				text: "Pivot left"
-				onClicked: backend.pivotLeft()
-			}
-			Button
-			{
-				text: "Pivot right"
-				onClicked: backend.pivotRight()
+				robotX: robot.x;
+				robotY: robot.y;
+				robotHeading: robot.heading;			
 			}
 		}
-
-		RoboView
+		Column
 		{
-			robotX: robot.x;
-			robotY: robot.y;
-			robotHeading: robot.heading;			
+			SignalPlot
+			{
+				title: "Wheel speed (rad/s)"
+				width: 400;
+				height: 400;
+				name1: "left";
+				value1: robot.leftWheelVel;
+				name2: "right";
+				value2: robot.rightWheelVel;
+			}
 		}
 	}
 }
