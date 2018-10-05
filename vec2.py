@@ -90,6 +90,14 @@ class Transform(namedtuple('Transform', ['heading', 'offset'])):
             cls._identity=Transform(0, Vec2.zero())
         return cls._identity
 
+    @staticmethod
+    def rotation(angle):
+        return Transform(heading = angle, offset = Vec2.zero())
+    
+    @staticmethod
+    def translation(vector):
+        return Transform(heading = 0, offset = vector)
+
     @property
     def x(self):
         return self.offset.x
@@ -97,3 +105,15 @@ class Transform(namedtuple('Transform', ['heading', 'offset'])):
     @property
     def y(self):
         return self.offset.y
+
+    def applyTo(self, vector):
+        return vector.rotate(self.heading) + self.offset
+
+    def after(self, other):
+        return Transform( \
+            heading = self.heading + other.heading, \
+            offset = self.applyTo(other.offset))
+
+    def inverse(self):
+        return Transform.rotation(-self.heading)\
+            .after(Transform.translation(-self.offset))
