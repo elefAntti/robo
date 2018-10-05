@@ -5,6 +5,14 @@ import math
 class Vec2(namedtuple('Vec2', ['x', 'y'])):
     __slots__ = ()
 
+    _zero = None
+
+    @classmethod
+    def zero(cls):
+        if not cls._zero:
+            cls._zero = Vec2(0,0)
+        return cls._zero
+
     @property
     def length(self):
         return math.hypot(self.x, self.y)
@@ -73,6 +81,15 @@ class Vec2(namedtuple('Vec2', ['x', 'y'])):
 
 class Transform(namedtuple('Transform', ['heading', 'offset'])):
     __slots__ = ()
+
+    _identity = None
+
+    @classmethod
+    def identity(cls):
+        if not cls._identity:
+            cls._identity=Transform(0, Vec2.zero())
+        return cls._identity
+
     @property
     def x(self):
         return self.offset.x
