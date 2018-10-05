@@ -2,6 +2,7 @@ import sys
 
 import rx
 from rx.subjects import BehaviorSubject
+from rx.concurrency import QtScheduler
 from PyQt5 import QtCore
 from PyQt5.QtCore import QObject, QUrl, pyqtSignal, pyqtSlot, pyqtProperty
 from PyQt5.QtQml import QQmlApplicationEngine
@@ -96,13 +97,14 @@ class GuiRobot(QObject):
 
 def simulateRobot(commands):
     dt = 30
-    return rx.Observable.interval(dt)\
+    return rx.Observable.interval(dt, scheduler=scheduler)\
         .with_latest_from(commands, lambda idx, command: command)\
         .scan(
             lambda pose, command: kine.predictPose(pose, command, dt/1000),
             Transform(heading = 0, offset=Vec2(0, 0))
         )
 
+scheduler = QtScheduler(QtCore)
 app = QApplication(sys.argv)
 backend = Backend()
 robot = GuiRobot()
@@ -111,7 +113,7 @@ backend.robot = robot
 
 backend.commands.subscribe(lambda command: print("Received "+str(command)))
 
-simulateRobot(backend.commands)\
+simulateRobot(backend.commands) \
     .subscribe(robot.setPose)
 
 engine = QQmlApplicationEngine()
