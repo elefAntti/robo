@@ -32,6 +32,22 @@ Canvas
         robocanvas.requestPaint();
     }
 
+    function drawBackground(ctx)
+    {
+        ctx.save()
+
+        ctx.lineWidth = 2 / width;
+        ctx.strokeStyle = "gray";
+        ctx.beginPath();
+        ctx.moveTo(0, -1);
+        ctx.lineTo(0, 1);
+        ctx.stroke();
+        ctx.moveTo(-1, 0);
+        ctx.lineTo(1, 0);
+        ctx.stroke();
+        ctx.restore();
+    }
+
     function drawRobot(ctx, x, y, h)
     {
         ctx.save();
@@ -78,6 +94,7 @@ Canvas
         var y_scale = -height/(mapYMax - mapYMin)
         ctx.scale(x_scale, y_scale);
         ctx.translate(-mapXMin, mapYMin);
+        drawBackground(ctx);
         drawRobot(ctx, robotX, robotY, robotHeading);
         ctx.restore();
     }
