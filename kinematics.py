@@ -15,6 +15,13 @@ class Command(namedtuple("command", ["velocity", "angularVelocity"])):
             velocity = velocity,
             angularVelocity = velocity * curvature)
 
+    @staticmethod
+    def arc_to(from_pose, to_vec, speed):
+        vec_in_local = from_pose.inverse().applyTo(to_vec)
+        behind = vec_in_local.x < 0
+        return Command.arc( velocity = speed if not behind else -speed,
+            curvature = 2.0 * vec_in_local.y / vec_in_local.lengthSq)
+
     @property
     def straight(self):
         return not self.pivot and \

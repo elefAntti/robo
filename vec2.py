@@ -16,6 +16,10 @@ class Vec2(namedtuple('Vec2', ['x', 'y'])):
     @property
     def length(self):
         return math.hypot(self.x, self.y)
+    
+    @property
+    def lengthSq(self):
+        return self.dot(self)
 
     @property
     def heading(self):
