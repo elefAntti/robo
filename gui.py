@@ -16,35 +16,39 @@ scheduler = QtScheduler(QtCore)
 class Backend(QObject):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self._commandSubject = BehaviorSubject(kine.Command(0, 0))
+        self._commandSubject = BehaviorSubject(kine.Command.arc(0, 0))
 
     @pyqtSlot()
     def forward(self):
-        self._commandSubject.on_next(kine.Command(0.5, 0.0))
+        self._commandSubject.on_next(kine.Command.arc(0.5, 0.0))
 
     @pyqtSlot()
     def backward(self):
-        self._commandSubject.on_next(kine.Command(-0.5, 0.0))
+        self._commandSubject.on_next(kine.Command.arc(-0.5, 0.0))
 
     @pyqtSlot()
     def left(self):
-        self._commandSubject.on_next(kine.Command(0.5, 0.5))
+        self._commandSubject.on_next(kine.Command.arc(0.5, 0.5))
 
     @pyqtSlot()
     def right(self):
-        self._commandSubject.on_next(kine.Command(0.5, -0.5))
+        self._commandSubject.on_next(kine.Command.arc(0.5, -0.5))
 
     @pyqtSlot()
     def stop(self):
-        self._commandSubject.on_next(kine.Command(0.0, 0.0))
+        self._commandSubject.on_next(kine.Command.arc(0.0, 0.0))
 
     @pyqtSlot()
     def pivotLeft(self):
-        self._commandSubject.on_next(kine.PivotCommand(0.3))
+        self._commandSubject.on_next(kine.Command(
+            velocity = 0,
+            angularVelocity=0.3))
 
     @pyqtSlot()
     def pivotRight(self):
-        self._commandSubject.on_next(kine.PivotCommand(-0.3))
+        self._commandSubject.on_next(kine.Command(
+            velocity = 0,
+            angularVelocity=-0.3))
 
     @property
     def commands(self):

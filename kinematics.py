@@ -2,55 +2,36 @@ from collections import namedtuple
 from math import sin, cos
 from vec2 import Vec2, Transform
 
-#Limit for when the movement is considered straight
-max_straight_curvature = 0.001
 
-class Command(namedtuple("command", ["velocity", "curvature"])):
+class Command(namedtuple("command", ["velocity", "angularVelocity"])):
     __slots__ = ()
+    #Limit for when the movement is considered straight
+    max_straight_curvature = 0.001
+    #Limit for when the movement is considered stopped
+    max_stopped_velocity = 0.0001
 
-    @property
-    def straight(self):
-        return abs(self.curvature) < max_straight_curvature
-
-    @property
-    def radius(self):
-        return 1/self.curvature
-
-    @property
-    def angularVelocity(self):
-        return self.velocity * self.curvature
-
-    @property
-    def pivot(self):
-        return False
-
-
-class PivotCommand(namedtuple("PivotCommand", ["angularVelocity"])):
-    __slots__ = ()
-
-    @property
-    def straight(self):
-        return False
-
-    @property
-    def radius(self):
-        return 0.0
-
-    @property
-    def velocity(self):
-        return 0.0
-
-    @property
-    def pivot(self):
-        return True
-
-def command_from_v_and_w(velocity, angularVelocity):
-    if abs(velocity) < 0.0001:
-        return PivotCommand(angularVelocity)
-    else:
+    @staticmethod
+    def arc(velocity, curvature):
         return Command(
             velocity = velocity,
-            curvature = angularVelocity / velocity)
+            angularVelocity = velocity * curvature)
+
+    @property
+    def straight(self):
+        return not self.pivot and \
+            abs(self.curvature) < Command.max_straight_curvature
+
+    @property
+    def pivot(self):
+        return abs(self.velocity) < Command.max_stopped_velocity
+
+    @property
+    def radius(self):
+        return self.velocity / self.angularVelocity
+
+    @property
+    def curvature(self):
+        return self.angularVelocity / self.velocity
 
 WheelCommand = namedtuple("WheelCommand", ["left_angular_vel", "right_angular_vel"])
 
@@ -77,7 +58,7 @@ class KinematicModel:
         angularVelocity = (right_vel - left_vel) / self.axel_width
         velocity = (right_vel + left_vel) / 2.0
 
-        return command_from_v_and_w(velocity, angularVelocity)
+        return Command(velocity, angularVelocity)
 
 def predictPose(pose, command, time):
     if command.pivot:
