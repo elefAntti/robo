@@ -2,7 +2,6 @@ from collections import namedtuple
 from math import sin, cos
 from vec2 import Vec2, Transform
 
-
 class Command(namedtuple("command", ["velocity", "angularVelocity"])):
     __slots__ = ()
     #Limit for when the movement is considered straight
@@ -33,6 +32,20 @@ class Command(namedtuple("command", ["velocity", "angularVelocity"])):
     def curvature(self):
         return self.angularVelocity / self.velocity
 
+    def integrate(self, time):
+        if self.straight:
+            distance = self.velocity * time
+            return Transform.translation(Vec2(distance, 0))
+        else:
+            heading_change = self.angularVelocity * time
+            displacement = Vec2.zero() if self.pivot else \
+                self.radius * Vec2(
+                    x = sin(heading_change),
+                    y = (-cos(heading_change) + 1))
+            return Transform(
+                heading=heading_change,
+                offset=displacement)
+
 WheelCommand = namedtuple("WheelCommand", ["left_angular_vel", "right_angular_vel"])
 
 class KinematicModel:
@@ -61,21 +74,4 @@ class KinematicModel:
         return Command(velocity, angularVelocity)
 
 def predictPose(pose, command, time):
-    if command.pivot:
-        return Transform(
-            heading = pose.heading + command.angularVelocity * time,
-            offset = pose.offset)
-    elif command.straight:
-        distance = command.velocity * time
-        return Transform(
-            heading = pose.heading, 
-            offset = pose.offset + Vec2.fromPolar(pose.heading, distance))
-    else:
-        new_heading = pose.heading + command.angularVelocity * time
-        displacement = Vec2(
-            x = (sin(new_heading) - sin(pose.heading)),
-            y = (-cos(new_heading) + cos(pose.heading))
-        ) * command.radius
-        return Transform(
-            heading=new_heading,
-            offset=pose.offset + displacement)
+    return pose.after(command.integrate(time))
