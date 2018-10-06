@@ -49,6 +49,11 @@ ApplicationWindow {
 					text: "Pivot right"
 					onClicked: backend.pivotRight()
 				}
+				Button
+				{
+					text: "To origin"
+					onClicked: backend.toOrigin()
+				}
 			}
 
 			RoboView

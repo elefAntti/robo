@@ -50,6 +50,11 @@ class Backend(QObject):
             velocity = 0,
             angularVelocity=-0.3))
 
+    @pyqtSlot()
+    def toOrigin(self):
+        self._commandSubject.on_next(
+            kine.Command.arc_to(self.robot.pose, Vec2.zero(), 0.5))
+
     @property
     def commands(self):
         return self._commandSubject
@@ -105,11 +110,16 @@ class GuiRobot(QObject):
     def rightWheelVel(self):
         return self._right_wheel_vel
 
+    @property
+    def pose(self):
+        return Transform(self.heading, Vec2(self.x, self.y))
+    
     def setPose(self, pose):
         self.x = pose.x
         self.y = pose.y
         self.heading = pose.heading
         self._headingChanged.emit()
+    
 
     def setWheelCommand(self, command):
         self._left_wheel_vel = command.left_angular_vel
@@ -127,6 +137,7 @@ def simulateRobot(initial_pose, commands, timestep_ms=30, scheduler=scheduler):
 app = QApplication(sys.argv)
 backend = Backend()
 robot = GuiRobot()
+backend.robot = robot
 
 backend.commands.subscribe(lambda command: print("Received "+str(command)))
 
