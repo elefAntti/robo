@@ -44,6 +44,14 @@ class PivotCommand(namedtuple("PivotCommand", ["angularVelocity"])):
     def pivot(self):
         return True
 
+def command_from_v_and_w(velocity, angularVelocity):
+    if abs(velocity) < 0.0001:
+        return PivotCommand(angularVelocity)
+    else:
+        return Command(
+            velocity = velocity,
+            curvature = angularVelocity / velocity)
+
 WheelCommand = namedtuple("WheelCommand", ["left_angular_vel", "right_angular_vel"])
 
 class KinematicModel:
@@ -54,17 +62,9 @@ class KinematicModel:
         self.right_wheel_r = right_wheel_r
 
     def computeWheelCommand(self, command):
-        if command.pivot:
-            right_vel = self.axel_width / 2 * command.angularVelocity
-            left_vel = -self.axel_width / 2 * command.angularVelocity
-        elif command.straight:
-            left_vel = command.velocity
-            right_vel = command.velocity
-        else:
-            left_radius = command.radius - self.axel_width / 2
-            right_radius = command.radius + self.axel_width / 2
-            left_vel = left_radius * command.angularVelocity
-            right_vel = right_radius * command.angularVelocity
+        r = self.axel_width / 2 
+        right_vel = command.velocity + r * command.angularVelocity
+        left_vel = command.velocity - r * command.angularVelocity
 
         return WheelCommand(
             left_angular_vel = left_vel / self.left_wheel_r,
@@ -73,22 +73,11 @@ class KinematicModel:
     def computeCommand(self, wheel_command):
         left_vel = wheel_command.left_angular_vel * self.left_wheel_r
         right_vel = wheel_command.right_angular_vel * self.right_wheel_r
-        if abs(left_vel + right_vel) < 0.0001:
-            return PivotCommand(right_vel / (self.axel_width / 2))
 
-        curvature = (left_vel - right_vel) / (left_vel + right_vel) \
-            / (self.axel_width / 2)
+        angularVelocity = (right_vel - left_vel) / self.axel_width
+        velocity = (right_vel + left_vel) / 2.0
 
-        if abs(curvature) < max_straight_curvature:
-            return Command(
-                velocity = left_vel,
-                curvature = 0.0)
-        else:
-            angular_vel = left_vel / self.left_wheel_r
-            return Command(
-                velocity=angular_vel / curvature,
-                curvature=curvature)
-
+        return command_from_v_and_w(velocity, angularVelocity)
 
 def predictPose(pose, command, time):
     if command.pivot:
@@ -108,5 +97,4 @@ def predictPose(pose, command, time):
         ) * command.radius
         return Transform(
             heading=new_heading,
-            offset=pose.offset + displacement
-        )
+            offset=pose.offset + displacement)
