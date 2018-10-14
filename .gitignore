@@ -14,7 +14,7 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+#lib/
 lib64/
 parts/
 sdist/
@@ -105,3 +105,4 @@ venv.bak/
 *.qmlc
 .vscode/*
 .vscode
+.DS_Store
