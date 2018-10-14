@@ -1,5 +1,5 @@
-import obj_pipe
-import vec2
+from lib import obj_pipe
+from lib import vec2
 
 dir = vec2.Vec2(1.0, 0.0)
 client = obj_pipe.send(("localhost", 8001))
