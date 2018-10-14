@@ -8,8 +8,8 @@ from PyQt5.QtCore import QObject, QUrl, pyqtSignal, pyqtSlot, pyqtProperty
 from PyQt5.QtQml import QQmlApplicationEngine
 from PyQt5.QtWidgets import QApplication
 
-from vec2 import Transform, Vec2
-import kinematics as kine
+from lib.vec2 import Transform, Vec2
+import lib.kinematics as kine
 
 scheduler = QtScheduler(QtCore)
 
@@ -153,7 +153,7 @@ backend.commands.map(kinematics.computeWheelCommand)\
 engine = QQmlApplicationEngine()
 engine.rootContext().setContextProperty("backend", backend)
 engine.rootContext().setContextProperty("robot", robot)
-engine.load('main.qml')
+engine.load('qml/main.qml')
 
 win = engine.rootObjects()[0]
 win.show()

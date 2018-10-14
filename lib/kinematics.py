@@ -1,6 +1,6 @@
 from collections import namedtuple
 from math import sin, cos
-from vec2 import Vec2, Transform
+from .vec2 import Vec2, Transform
 
 class Command(namedtuple("command", ["velocity", "angularVelocity"])):
     __slots__ = ()
