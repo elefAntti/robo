@@ -8,9 +8,9 @@ class Backend(QObject):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-    @pyqtSlot(bool)
-    def forward(self, pressed):
-        print("Forward " + str(pressed) )
+    @pyqtSlot(str, bool)
+    def forward(self, pressed, down):
+        print("Forward {} is {}".format(pressed, 'down' if down else 'up') )
 
 app = QApplication(sys.argv)
 backend = Backend()
