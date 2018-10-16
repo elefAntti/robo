@@ -17,7 +17,7 @@ def keyEvent(ke):
     typ = ke.event_type
     if typ == 'down':
         if key not in pressedKeys:
-            pressedKeys.append('w')
+            pressedKeys.append(key)
     if typ == 'up' and key in pressedKeys:
         pressedKeys.remove(key)
 
@@ -41,7 +41,7 @@ def keyEvent(ke):
     if 'h' in pressedKeys:
         handMotorSpeed += 100
 
-    sent = sock.sendto(bytes("%d, %d, %d" % (leftMotorSpeed, rightMotorSpeed, handMotorSpeed),
+    sent = sock.sendto(bytes("%d, %d, %d" % (leftMotorSpeed, rightMotorSpeed, handMotorSpeed), \
         "UTF-8"), address)
     print("pressed:", pressedKeys)
     
