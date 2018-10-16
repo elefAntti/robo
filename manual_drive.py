@@ -7,7 +7,7 @@ import sys
 
 #ip = '169.254.130.192'
 ip = ''
-forwardSpeed = 360
+forwardSpeed = 1000
 turnBigSpeed = 180
 turnSmallSpeed = -180
 
@@ -22,7 +22,8 @@ motorA = ev3.LargeMotor('outA')
 motorB = ev3.LargeMotor('outB')
 button = ev3.Button()
 
-print("Connected")
+for i in range(10):
+    print("Ready to Connect")
 
 while not button.any():
     data, server = sock.recvfrom(64)

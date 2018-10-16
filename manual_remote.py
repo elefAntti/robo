@@ -2,7 +2,7 @@ import socket
 import sys
 import keyboard
 pressedKeys = []
-ip = '192.168.2.3'
+ip = '169.254.244.55'
 
 # Create a TCP/IP socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
