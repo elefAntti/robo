@@ -1,7 +1,9 @@
 import rx
+from rx.concurrency import ThreadPoolScheduler
 import socket
 import msgpack
 
+scheduler = ThreadPoolScheduler()
 handshake_len = 10
 
 _decoders = {}
@@ -31,7 +33,7 @@ def listen(address):
             if msg_counter < msg[0] or msg[0] < handshake_len:
                 msg_counter = msg[0]
                 observer.on_next(decode(msg))
-    return rx.Observable.create(server)
+    return rx.Observable.create(server).subscribe_on(scheduler) 
 
 def send_raw(address):
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
