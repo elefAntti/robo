@@ -14,7 +14,7 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+#lib/
 lib64/
 parts/
 sdist/
@@ -103,3 +103,6 @@ venv.bak/
 # mypy
 .mypy_cache/
 *.qmlc
+.vscode/*
+.vscode
+.DS_Store
