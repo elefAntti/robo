@@ -2,6 +2,7 @@ import socket
 import sys
 import keyboard
 pressedKeys = []
+
 ip = '192.168.2.3'
 
 # Create a TCP/IP socket
@@ -9,26 +10,42 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 address = (ip, 8000)
 
 def keyEvent(ke):
+    leftMotorSpeed = 0
+    rightMotorSpeed = 0
+    handMotorSpeed = 0
     key = ke.name
     typ = ke.event_type
     if typ == 'down':
-        if key == 'w' and 'w' not in pressedKeys:
-            sent = sock.sendto(bytes("forw", "UTF-8"), address)
+        if key not in pressedKeys:
             pressedKeys.append('w')
-        if key == 's' and 's' not in pressedKeys:
-            sent = sock.sendto(bytes("back", "UTF-8"), address)
-            pressedKeys.append('s')
-        if key == 'a' and 'a' not in pressedKeys:
-            sent = sock.sendto(bytes("left", "UTF-8"), address)
-            pressedKeys.append('a')
-        if key == 'd' and 'd' not in pressedKeys:
-            sent = sock.sendto(bytes("right", "UTF-8"), address)
-            pressedKeys.append('d')
     if typ == 'up' and key in pressedKeys:
         pressedKeys.remove(key)
-    if typ == 'up' and key in ['w','a','s','d'] and 'w' not in pressedKeys and 's' not in pressedKeys and 'a' not in pressedKeys and 'd' not in pressedKeys:
-        sent = sock.sendto(bytes("halt", "UTF-8"), address)
-    #print(sent)
+
+    
+    if 'w' in pressedKeys and 's' not in pressedKeys:
+        leftMotorSpeed += 100
+        rightMotorSpeed += 100
+    if 's' in pressedKeys and 'w' not in pressedKeys:
+        leftMotorSpeed -= 100
+        rightMotorSpeed -= 100
+    if 'd' in pressedKeys:
+        if 's' not in pressedKeys:
+            rightMotorSpeed -= 50
+        elif 'w' in pressedKeys:
+            rightMotorSpeed += 50
+        else:
+    if 'a' in pressedKeys:
+        if 's' not in pressedKeys:
+            leftMotorSpeed -= 50
+        if 'w' not in pressedKeys:
+            leftMotorSpeed += 50
+    if 'h' in pressedKeys:
+        handMotorSpeed += 100
+
+    sent = sock.sendto(bytes("%d, %d, %d" % (leftMotorSpeed, rightMotorSpeed, handMotorSpeed),
+        "UTF-8"), address)
+    print("pressed:", pressedKeys)
+    
 keyboard.hook(keyEvent)
 
 i=0

@@ -20,6 +20,7 @@ sock.bind(server_address)
 
 motorA = ev3.LargeMotor('outA')
 motorB = ev3.LargeMotor('outB')
+motorC = ev3.MediumMotor('outC')
 button = ev3.Button()
 
 print("Connected")
@@ -27,26 +28,15 @@ print("Connected")
 while not button.any():
     data, server = sock.recvfrom(64)
     data = data.decode("utf-8")
-    if data == 'forw':
-        print('forw')
-        motorA.run_forever(speed_sp = forwardSpeed)
-        motorB.run_forever(speed_sp = forwardSpeed)
-    elif data == 'back':
-        print('back')
-        motorA.run_forever(speed_sp = -forwardSpeed)
-        motorB.run_forever(speed_sp = -forwardSpeed)
-    elif data == 'left':
-        print('left')
-        motorA.run_forever(speed_sp = turnBigSpeed)
-        motorB.run_forever(speed_sp = turnSmallSpeed)
-    elif data == 'right':
-        print('right')
-        motorA.run_forever(speed_sp = turnSmallSpeed)
-        motorB.run_forever(speed_sp = turnBigSpeed)
-    else:
-        print('halt')
-        motorA.stop()
-        motorB.stop()
+    motorSpeeds = data.split[',']
+    if len(motorSpeeds) == 3 and
+        motorSpeeds[0].isdigit() and
+        motorSpeeds[1].isdigit() and
+        motorSpeeds[2].isdigit():
+        motorA.run_forever(speed_sp = forwardSpeed * int(motorSpeeds[0]))
+        motorB.run_forever(speed_sp = forwardSpeed * int(motorSpeeds[1]))
+        motorC.run_forever(speed_sp = forwardSpeed * int(motorSpeeds[2]))
 
 motorA.stop()
 motorB.stop()
+motorC.stop()
