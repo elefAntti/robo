@@ -33,7 +33,6 @@ def keyEvent(ke):
             rightMotorSpeed -= 50
         elif 'w' in pressedKeys:
             rightMotorSpeed += 50
-        else:
     if 'a' in pressedKeys:
         if 's' not in pressedKeys:
             leftMotorSpeed -= 50
