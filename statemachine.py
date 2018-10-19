@@ -3,18 +3,18 @@ from lib.state import State, States
 class Statemachine():
 
     states = {}
-    stateManual = State("Manual")
-    stateChallenge1 = State("Challenge 1")
-    stateChallenge2 = State("Challenge 2")
-    stateChallenge3 = State("Challenge 3")
-    stateChallenge4 = State("Challenge 4")
-    stateChallenge5 = State("Challenge 5")
-    stateChallenge6 = State("Challenge 6")
-    stateTransit12 = State("Transit 1-2")
-    stateTransit23 = State("Transit 2-3")
-    stateTransit34 = State("Transit 3-4")
-    stateTransit45 = State("Transit 4-5")
-    stateTransit56 = State("Transit 5-6")
+    stateManual = State(States.MANUAL)
+    stateChallenge1 = State(States.CHALLENGE1)
+    stateChallenge2 = State(States.CHALLENGE2)
+    stateChallenge3 = State(States.CHALLENGE3)
+    stateChallenge4 = State(States.CHALLENGE4)
+    stateChallenge5 = State(States.CHALLENGE5)
+    stateChallenge6 = State(States.CHALLENGE6)
+    stateTransit12 = State(States.TRANSIT12)
+    stateTransit23 = State(States.TRANSIT23)
+    stateTransit34 = State(States.TRANSIT34)
+    stateTransit45 = State(States.TRANSIT45)
+    stateTransit56 = State(States.TRANSIT56)
 
     def __init__(self):
         self.states[States.MANUAL] = self.stateManual
@@ -30,16 +30,16 @@ class Statemachine():
         self.states[States.TRANSIT45] = self.stateTransit45
         self.states[States.TRANSIT56] = self.stateTransit56
 
-        self.stateChallenge1.NextState = self.stateTransit12
-        self.stateTransit12.NextState = self.stateChallenge2
-        self.stateChallenge2.NextState = self.stateTransit23
-        self.stateTransit23.NextState = self.stateChallenge3
-        self.stateChallenge3.NextState = self.stateTransit34
-        self.stateTransit34.NextState = self.stateChallenge4
-        self.stateChallenge4.NextState = self.stateTransit45
-        self.stateTransit45.NextState = self.stateChallenge5
-        self.stateChallenge5.NextState = self.stateTransit56
-        self.stateTransit56.NextState = self.stateChallenge6
+        self.stateChallenge1.NextState = States.TRANSIT12
+        self.stateTransit12.NextState = States.CHALLENGE2
+        self.stateChallenge2.NextState = States.TRANSIT23
+        self.stateTransit23.NextState = States.CHALLENGE3
+        self.stateChallenge3.NextState = States.TRANSIT34
+        self.stateTransit34.NextState = States.CHALLENGE4
+        self.stateChallenge4.NextState = States.TRANSIT45
+        self.stateTransit45.NextState = States.CHALLENGE5
+        self.stateChallenge5.NextState = States.TRANSIT56
+        self.stateTransit56.NextState = States.CHALLENGE6
 
         self.currentState = self.stateChallenge1
         self.currentState.Enter()        
@@ -48,9 +48,9 @@ class Statemachine():
     def Run(self):
         nextState = self.currentState.Update()
 
-        if nextState != self.currentState:
+        if nextState != self.currentState.Id:
             self.currentState.Exit()
-            self.currentState = nextState
+            self.currentState = self.states[nextState]
             self.currentState.Enter()
     
     # Force the state machine to enter a specific state
