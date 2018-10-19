@@ -4,6 +4,8 @@ kinematics code for a differential drive robot and an ui to test it.
 
 ## How to use
 
+These instructions are for linux. For other OS's, good luck.
+
 You have to have python3 and pip installed.
 
 Clone the repository. Go to the repository and run
