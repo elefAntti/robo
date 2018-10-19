@@ -1,4 +1,7 @@
 import sys
+import rx
+
+from rx.concurrency import QtScheduler
 from PyQt5 import QtCore
 from PyQt5.QtCore import QObject, QUrl, pyqtSignal, pyqtSlot, pyqtProperty
 from PyQt5.QtQml import QQmlApplicationEngine
@@ -11,6 +14,7 @@ manual = False
 release = False
 
 ip = '192.168.43.21'
+scheduler = QtScheduler(QtCore)
 
 # Create a TCP/IP socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -27,11 +31,6 @@ class Backend(QObject):
     def forward(self, pressed, down):
         self.keys[pressed] = down
         print("Forward {} is {}".format(pressed, 'down' if down else 'up') )
-        command = self.get_command()
-        print("sending %f %f"%command)
-        sock.sendto(bytes("%f, %f, %f" % \
-        (command[0], command[1], 0), \
-        "UTF-8"), address)
 
     def get_command(self):
         leftMotorSpeed = 0
@@ -53,6 +52,12 @@ class Backend(QObject):
             rightMotorSpeed += 50
             leftMotorSpeed -= 50
         return leftMotorSpeed, rightMotorSpeed
+    def send_packet(self, _):
+        command = self.get_command()
+        print("sending %f %f"%command)
+        sock.sendto(bytes("%f, %f, %f" % \
+        (command[0], command[1], 0), \
+        "UTF-8"), address)
 
 app = QApplication(sys.argv)
 backend = Backend()
@@ -63,5 +68,7 @@ engine.load('qml/keys.qml')
 
 win = engine.rootObjects()[0]
 win.show()
+
+rx.Observable.interval(1000/30, scheduler=scheduler).subscribe(backend.send_packet)
 
 app.exec_()
