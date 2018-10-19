@@ -5,7 +5,7 @@ pressedKeys = []
 manual = False
 release = False
 
-ip = '192.168.2.3'
+ip = '192.168.43.21'
 
 # Create a TCP/IP socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -17,6 +17,8 @@ def keyEvent(ke):
     handMotorSpeed = 0
     key = ke.name
     typ = ke.event_type
+    manual = False
+    release = False
     if typ == 'down':
         if key == 'm':
             manual = True
