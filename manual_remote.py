@@ -2,6 +2,8 @@ import socket
 import sys
 import keyboard
 pressedKeys = []
+manual = False
+release = False
 
 ip = '192.168.2.3'
 
@@ -16,12 +18,29 @@ def keyEvent(ke):
     key = ke.name
     typ = ke.event_type
     if typ == 'down':
-        if key not in pressedKeys:
+        if key == 'm':
+            manual = True
+        elif key == 'n':
+            release = True
+        elif key not in pressedKeys:
             pressedKeys.append(key)
-    if typ == 'up' and key in pressedKeys:
-        pressedKeys.remove(key)
+    if typ == 'up':
+        if key == 'm':
+            manual = False
+        elif key == 'n':
+            release = False
+        elif key in pressedKeys:
+            pressedKeys.remove(key)
 
     
+    if manual:
+        sock.sendto(bytes("manual", "UTF-8"), address)
+        print("Manual override requested.")
+        return
+    if release:
+        sock.sendto(bytes("release", "UTF-8"), address)
+        print("Robot release requested.")
+        return
     if 'w' in pressedKeys and 's' not in pressedKeys:
         leftMotorSpeed += 100
         rightMotorSpeed += 100
@@ -51,7 +70,8 @@ def keyEvent(ke):
     if 'h' in pressedKeys:
         handMotorSpeed += 100
 
-    sent = sock.sendto(bytes("%d, %d, %d" % (leftMotorSpeed, rightMotorSpeed, handMotorSpeed), \
+    sock.sendto(bytes("%d, %d, %d" % \
+        (leftMotorSpeed, rightMotorSpeed, handMotorSpeed), \
         "UTF-8"), address)
     print("pressed:", pressedKeys)
     
