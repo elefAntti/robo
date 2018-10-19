@@ -28,16 +28,26 @@ def keyEvent(ke):
     if 's' in pressedKeys and 'w' not in pressedKeys:
         leftMotorSpeed -= 100
         rightMotorSpeed -= 100
-    if 'd' in pressedKeys:
-        if 's' not in pressedKeys:
+    if 'd' in pressedKeys and 'a' not in pressedKeys:
+        if 'w' in pressedKeys and \
+            's' not in pressedKeys:
             rightMotorSpeed -= 50
-        elif 'w' in pressedKeys:
+        elif 's' in pressedKeys and \
+            'w' not in pressedKeys:
             rightMotorSpeed += 50
-    if 'a' in pressedKeys:
-        if 's' not in pressedKeys:
+        else:
+            rightMotorSpeed -= 100
+            leftMotorSpeed += 100
+    if 'a' in pressedKeys and 'd' not in pressedKeys:
+        if 'w' in pressedKeys and \
+            's' not in pressedKeys:
             leftMotorSpeed -= 50
-        if 'w' not in pressedKeys:
+        elif 's' in pressedKeys and \
+            'w' not in pressedKeys:
             leftMotorSpeed += 50
+        else:
+            leftMotorSpeed -= 100
+            rightMotorSpeed += 100
     if 'h' in pressedKeys:
         handMotorSpeed += 100
 
