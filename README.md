@@ -2,31 +2,43 @@
 
 kinematics code for a differential drive robot and an ui to test it.
 
-## You need
-rxpy: pip install rx
+## How to use
 
-qt5: pip install pyqt5
+You have to have python3 and pip installed.
 
-## valheen venvi ohje
-
-Siis luo kansio projektille. Luo venv komennolla
-
+Clone the repository. Go to the repository and run
+```
 python3 -m venv venv
-
-Aktivoi venv komennolla
-
-
+```
+Activate venv with the command
+```
 source venv/bin/activate
-
-Tee koodia. Lataile tarvittavia paketteja. Sit aja
-
-
-pip freeze > requirements.txt
-
-Laita .gitignore:een venv
-
-Laita githubiin.
-
-Sit joku kloonaa sen githubista. Sit se ajaa siinä repossa noi samat komennot, paitsi ei tota freezeä. Sen sijaan se ajaa
-
+```
+Then install the dependencies by running
+```
 pip install -r requirements.txt
+```
+Now you can run the programs by running
+```
+python3 programname.py
+```
+
+## How to develop
+
+When you have done everything described above, you are ready to start coding. Create a new branch by running
+```
+git checkout -b feature/new-branch-name
+```
+Make changes while the venv is active. If you have installed new packages, run
+```
+pip freeze > requirements.txt
+```
+Then commit the changes you made and the previous command made in the requirements.txt.
+```
+git add .
+git commit -m "description of the changes"
+```
+Push them into github by running
+```
+git push origin feature/new-branch-name
+```
