@@ -17,19 +17,16 @@ class States(Enum):
 
 # TODO: Each challenge should be a separate class that inherits State
 # TODO: Manual state needs to be able to force the state machine into any state.
-# Possible solutions:
-# - Manual state has a pointer to Statemachine and calls its SetState function
-# - Manual state has a pointer to a dict of all the possible states and returns one of them from Update
 class State():
 
-    def __init__(self, name):
-        self.__name = name
-        self.__nextState = None
+    def __init__(self, id):
+        self.__id = id
+        self.__nextState = self.__id
     
     # Name string for this state
     @property
-    def Name(self):
-        return self.__name
+    def Id(self):
+        return self.__id
 
     # A pointer to the next state
     @property
@@ -39,7 +36,7 @@ class State():
     # Update: Performs actions and returns what the next state should be.
     # Returns self if we should stay in this state.
     def Update(self):
-        return self
+        return self.Id
 
     # Enter: We call this function once when we enter this state. Any initial
     # actions should be performed here.
