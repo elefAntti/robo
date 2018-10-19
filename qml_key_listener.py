@@ -20,17 +20,24 @@ scheduler = QtScheduler(QtCore)
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 address = (ip, 8000)
 
+sock.setblocking(0)
+
 #sock.sendto(bytes("0,0,0", "UTF-8"),address)
 
 class Backend(QObject):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.keys = defaultdict(lambda:False)
+        self.seq_no = 0
 
     @pyqtSlot(str, bool)
     def forward(self, pressed, down):
         self.keys[pressed] = down
         print("Forward {} is {}".format(pressed, 'down' if down else 'up') )
+    
+    @pyqtSlot(int)
+    def releaseManual(self, challenge_id):
+        print("Go to challenge %d"%challenge_id)
 
     def get_command(self):
         leftMotorSpeed = 0
@@ -40,24 +47,25 @@ class Backend(QObject):
         right = self.keys['d'] and not self.keys['a']
         left  = self.keys['a'] and not self.keys['d']
         if forward:
-            leftMotorSpeed += 100
-            rightMotorSpeed += 100
+            leftMotorSpeed += 500
+            rightMotorSpeed += 500
         if backward:
-            leftMotorSpeed -= 100
-            rightMotorSpeed -= 100
+            leftMotorSpeed -= 500
+            rightMotorSpeed -= 500
         if right:
-            rightMotorSpeed -= 50
-            leftMotorSpeed += 50
+            rightMotorSpeed -= 250
+            leftMotorSpeed += 250
         if left:
-            rightMotorSpeed += 50
-            leftMotorSpeed -= 50
+            rightMotorSpeed += 250
+            leftMotorSpeed -= 250
         return leftMotorSpeed, rightMotorSpeed
     def send_packet(self, _):
         command = self.get_command()
         print("sending %f %f"%command)
-        sock.sendto(bytes("%f, %f, %f" % \
-        (command[0], command[1], 0), \
+        sock.sendto(bytes("%d, %f, %f, %f" % \
+        (self.seq_no, command[0], command[1], 0), \
         "UTF-8"), address)
+        self.seq_no += 1
 
 app = QApplication(sys.argv)
 backend = Backend()

@@ -29,10 +29,6 @@ ApplicationWindow
 
         Keys.onReleased: 
         {
-            if (event.key == Qt.Key_Up && !event.isAutoRepeat)
-            {
-                backend.forward(false);
-            }
             if (event.key == Qt.Key_W && !event.isAutoRepeat)
                 backend.forward('w', false);
             if (event.key == Qt.Key_A && !event.isAutoRepeat)
@@ -41,6 +37,14 @@ ApplicationWindow
                 backend.forward('s', false);
             if (event.key == Qt.Key_D && !event.isAutoRepeat)
                 backend.forward('d', false);
+        }
+    }
+    Row
+    {
+        Button
+        {
+            text: "Challenge 2"
+            onClicked: backend.releaseManual(2)
         }
     }
 }
