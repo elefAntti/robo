@@ -11,7 +11,7 @@ from statemachine import Statemachine
 forwardSpeed = 360
 print("Initializing")
 
-robot = RobotInterface.RobotInterface('outA','outB')
+robot = RobotInterface.RobotInterface('outB','outA', flip_dir = True)
 button = ev3.Button()
 
 print("Motors connected.")
@@ -30,7 +30,7 @@ manual = True
 while not button.any():
     motorSpeeds, state = remote.receive()
     if state == 0:
-        if manual:
+        if not manual:
             fsm.SetState(States(state)) 
         manual = True
     else:
