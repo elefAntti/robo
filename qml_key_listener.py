@@ -64,8 +64,8 @@ class Backend(QObject):
     def send_packet(self, _):
         command = self.get_command()
         print("sending %f %f %d"%(command[0], command[1], self.robot_state))
-        sock.sendto(bytes("%d, %f, %f, %d" % \
-        (self.seq_no, command[0], command[1], self.robot_state), \
+        sock.sendto(bytes("%d, %f, %f, %f, %d" % \
+        (self.seq_no, command[0], command[1], 0, self.robot_state), \
         "UTF-8"), address)
         self.seq_no += 1
 
