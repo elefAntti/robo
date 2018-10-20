@@ -6,9 +6,13 @@ class StateChallenge1(State):
     def __init__(self, id, environment):
         super().__init__(id, environment)
         self._colorSensor = self._robot.colorSensor
+        self._latestColor = Colors.UNKNOWN
 
     def Update(self):
-        detectedColor = self._colorSensor.value()
+        detectedColor = Colors(self._colorSensor.value())
+        if detectedColor != self._latestColor:
+            print(detectedColor.name)
+            self._latestColor = detectedColor
         if detectedColor == Colors.BLUE or detectedColor == Colors.RED:
             self._robot.stop()
             return self.NextState
