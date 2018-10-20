@@ -47,7 +47,12 @@ while not button.any():
             print("Entering %d"%state) 
             hack = True
             #operation = RobotInterface.GyroPivot(robot, 90)
-            operation = RobotInterface.DriveForward(robot, 0.13)
+            operation = RobotInterface.CommandSequence(
+                RobotInterface.GyroPivot(robot, 90),
+                RobotInterface.DriveForward(robot, 0.5),
+                RobotInterface.GyroPivot(robot, 90),
+                RobotInterface.DriveForward(robot, 0.5)
+            )
         ready = operation.update()
         if ready: 
             manual = True

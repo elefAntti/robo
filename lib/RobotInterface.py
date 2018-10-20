@@ -24,7 +24,7 @@ class GyroPivot:
         print("GyroPivot! %f"% robot.gyro.value())
         print("target %f"% self.target_angle)
     def start(self):
-        self.start_angle = robot.gyro.value() * -1
+        self.start_angle = self.robot.gyro.value() * -1
         self.target_angle = self.start_angle + self.angle_diff
     def update(self):
         dAngle = self.target_angle - self.robot.gyro.value() * -1
@@ -103,14 +103,14 @@ class ArcWithGyro:
 
     def update(self):
         self.gyro_odo.update()
-        dist = self.target.distance(gyro_odo.get_transform().offset)
+        dist = self.target.distance(self.gyro_odo.get_transform().offset)
         if dist < self.accuracy:
             self.robot.stop()
             return True
 
         k = max(abs(dist / 0.10), 1)
         speed = self.speed * k 
-        command = Command.arc_to(gyro_odo.get_transform(), self.target, speed)
+        command = Command.arc_to(self.gyro_odo.get_transform(), self.target, speed)
         wheel_command = self.robot.kinematics.computeWheelCommand(command)
         self.robot.executeWheelCommand(wheel_command)
         return False
@@ -226,3 +226,22 @@ class RobotInterface:
     def stop(self):
         self.left_motor.stop()
         self.right_motor.stop()
+
+
+class CommandSequence:
+    def __init__(self, *children):
+        self.children = children
+        self.start()
+    def start(self):
+        self.currentChild = 0
+        self.children[self.currentChild].start()
+    def update(self):
+        if self.currentChild >= len(self.children):
+            return True
+        done = self.children[self.currentChild].update()
+        if done:
+            self.currentChild += 1
+            if self.currentChild >= len(self.children):
+                return True
+            self.children[self.currentChild].start()
+        return False
