@@ -16,7 +16,7 @@ class StateChallenge1(State):
             self._robot.stop()
             return self.NextState
 
-        if self._ultrasonic.distance_centimeters < 10:
+        if self._ultrasonic.value() < 100:
             # turn left if there's something straight ahead
             self._robot.simpleDrive(-100, 100)
         else:

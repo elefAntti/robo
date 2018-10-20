@@ -1,5 +1,5 @@
 from lib.state import State, States
-from enums import Colors
+from lib.enums import Colors
 
 # State for driving across challenge transitions (orange bits)
 class StateTransit(State):
