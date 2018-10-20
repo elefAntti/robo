@@ -9,9 +9,9 @@ class LineFollower(State):
         super().__init__(id, environment)
         self._colorSensor = self._robot.colorSensor
         self._gyro = self._robot.gyro
-        self._turn = 200
+        self._turn = -200
         self._bright = 15
-        self._tspd = -120
+        self._tspd = -240
         self._gyroTreshold = 20
         self._turnRight = True
         self._lastGyro = 0
@@ -29,7 +29,7 @@ class LineFollower(State):
             if self._operation.update():
                 self._operation = None
         else:
-            print(self._colorSensor.value())        
+            #print(self._colorSensor.value())        
             rspd = 0
             if self._colorSensor.value() > self._bright:
                 rspd = -self._turn
@@ -42,6 +42,7 @@ class LineFollower(State):
                     self._turnRight = False
                     self._lastGyro = self._gyro.value()
 
+            #print((time.time() - self._lineFollowTimer), (abs(self._lastGyro - self._gyro.value())))
             if abs(self._lastGyro - self._gyro.value()) > self._gyroTreshold and time.time() - self._lineFollowTimer > self._lineFollowTime:
                 #self._robot.driveForTime(500, 500, self._repositionTime)
                 self._operation = RobotInterface.DriveForward(self._robot, 0.13)
@@ -52,7 +53,7 @@ class LineFollower(State):
         return self.Id
 
     def Enter(self):
-        self._sound.speak("Entering " + self.Id.name)
+        super().Enter()
         self._colorSensor.mode = 'COL-REFLECT'
         self._gyro.mode = 'GYRO-ANG'
         self._turnRight = True
@@ -61,5 +62,5 @@ class LineFollower(State):
         self._lineFollowTimer = time.time()
 
     def Exit(self):
-        self._sound.speak("Exiting " + self.Id.name)
+        super().Exit()
         self._robot.stop()
