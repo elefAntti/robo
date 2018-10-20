@@ -43,8 +43,26 @@ ApplicationWindow
     {
         Button
         {
+            text: "Tele operation"
+            onClicked: backend.releaseManual(0)
+        }
+
+        Button
+        {
+            text: "Challenge 1"
+            onClicked: backend.releaseManual(1)
+        } 
+
+        Button
+        {
             text: "Challenge 2"
             onClicked: backend.releaseManual(2)
+        }
+
+        Button
+        {
+            text: "Challenge 3"
+            onClicked: backend.releaseManual(3)
         }
     }
 }

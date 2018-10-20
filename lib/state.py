@@ -20,20 +20,10 @@ class States(Enum):
 class State():
 
     def __init__(self, id, environment):
-        self._id = id
-        self._nextState = self._id
+        self.Id = id
+        self.NextState = self.Id
         self._environment = environment
     
-    # Name string for this state
-    @property
-    def Id(self):
-        return self._id
-
-    # A name of the next state
-    @property
-    def NextState(self):
-        return self._nextState
-
     # Update: Performs actions and returns what the next state should be.
     # Returns self if we should stay in this state.
     def Update(self):
