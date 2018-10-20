@@ -39,6 +39,26 @@ class GyroPivot:
             self.robot.simpleDrive(-speed, speed)
         return False
 
+class GyroWaitForRotation:
+    def __init__(self, robot, angle_diff, accuracy = 1):
+        self.start_angle = robot.gyro.value() * -1
+        self.target_angle = self.start_angle + angle_diff
+        self.robot = robot
+        self.accuracy = accuracy
+        self.angle_diff = angle_diff
+        self.start()
+        print("GyroPivot! %f"% robot.gyro.value())
+        print("target %f"% self.target_angle)
+    def start(self):
+        self.start_angle = self.robot.gyro.value() * -1
+        self.target_angle = self.start_angle + self.angle_diff
+    def update(self):
+        dAngle = self.target_angle - self.robot.gyro.value() * -1
+
+        if abs(dAngle) < self.accuracy:
+            return True
+        return False
+
 class DriveForward:
     def __init__(self, robot, distance, speed = 200, accuracy = 0.01):
         self.robot = robot
@@ -99,10 +119,10 @@ class ArcWithGyro:
         self.gyro_odo = GyroOdometry(robot)
         self.start()
     def start(self):
-        self.gyro_odo.reset()
+        self.gyro_odo.reset(self.robot )
 
     def update(self):
-        self.gyro_odo.update()
+        self.gyro_odo.update(self.robot )
         dist = self.target.distance(self.gyro_odo.get_transform().offset)
         if dist < self.accuracy:
             self.robot.stop()
@@ -244,4 +264,28 @@ class CommandSequence:
             if self.currentChild >= len(self.children):
                 return True
             self.children[self.currentChild].start()
+        return False
+
+class WaitCommand:
+    def __init__(self, duration):
+        self.duration = duration
+        self.start()
+    def start(self):
+        self.start_time = time.time()
+    def update(self):
+        return (time.time() - self.start_time) >= self.duration
+
+class GyroInitCommand:
+    def __init__(self, robot):
+        self.robot = robot
+        self.start()
+    def start(self):
+        self.start_time = time.time()
+        self.robot.sound.beep()
+        self.robot.gyro.mode='GYRO-CAL'
+    def update(self):
+        if (time.time() - self.start_time) >= 2:
+            self.gyro.mode='GYRO-ANG'
+            self.robot.sound.beep()
+            return True
         return False
