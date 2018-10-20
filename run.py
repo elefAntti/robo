@@ -12,10 +12,12 @@ import lib.kinematics as kine
 forwardSpeed = 360
 print("Initializing")
 
+corr_fact = 0.84 * 0.98
+
 kine_model = kine.KinematicModel(
     axel_width = 0.11,
-    left_wheel_r = 0.038 / 2,
-    right_wheel_r = 0.038 / 2)
+    left_wheel_r = 0.038 / 2 * corr_fact,
+    right_wheel_r = 0.038 / 2 * corr_fact)
 
 robot = RobotInterface.RobotInterface('outB','outA', kine_model, flip_dir = True)
 button = ev3.Button()
@@ -45,7 +47,7 @@ while not button.any():
             print("Entering %d"%state) 
             hack = True
             #operation = RobotInterface.GyroPivot(robot, 90)
-            operation = RobotInterface.DriveForward(robot, 1)
+            operation = RobotInterface.DriveForward(robot, 0.13)
         ready = operation.update()
         if ready: 
             manual = True
