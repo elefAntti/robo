@@ -1,6 +1,6 @@
 from ev3dev import ev3
 from .vec2 import Vec2, Transform
-import kinematics as kine
+from .kinematics import Command
 import time
 import math
 
@@ -50,12 +50,12 @@ class DriveForward:
         self.left_position = self.robot.left_motor_pos
         self.right_position = self.robot.right_motor_pos
     def update(self):
-        new_left = robo.left_motor_pos
-        new_right = robo.right_motor_pos
+        new_left = self.robot.left_motor_pos
+        new_right = self.robot.right_motor_pos
         d_left = (new_left - self.left_position) / 180.0 * math.pi
         d_right = (new_right - self.right_position) / 180.0 * math.pi
-        forward = (d_left * self.robot.kinematics.l_wheel_radius\
-         + d_right * self.robot.kinematics.r_wheel_radius)
+        forward = (d_left * self.robot.kinematics.left_wheel_r\
+         + d_right * self.robot.kinematics.right_wheel_r) / 2.0
 
         diff = self.distance - forward
         if abs(diff) < self.accuracy:
@@ -110,7 +110,7 @@ class ArcWithGyro:
 
         k = max(abs(dist / 0.10), 1)
         speed = self.speed * k 
-        command = kine.Command.arc_to(gyro_odo.get_transform(), self.target, speed)
+        command = Command.arc_to(gyro_odo.get_transform(), self.target, speed)
         wheel_command = self.robot.kinematics.computeWheelCommand(command)
         self.robot.executeWheelCommand(wheel_command)
         return False
