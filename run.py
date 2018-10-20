@@ -8,11 +8,6 @@ from lib import RemoteControlSocket, RobotInterface
 
 forwardSpeed = 360
 
-#ip = '169.254.130.192'
-ip = ''
-
-motorA = ev3.LargeMotor('outA')
-motorB = ev3.LargeMotor('outB')
 robot = RobotInterface.RobotInterface('outA','outB')
 motorC = ev3.MediumMotor('outC')
 button = ev3.Button()
@@ -37,12 +32,11 @@ while not button.any():
 
     if manual:
         motorSpeeds = remote.receive()
-        robot.simpleDrive(
-            forwardSpeed * int(motorSpeeds[0]),
-            forwardSpeed * int(motorSpeeds[1]))
+        robot.simpleDrive(motorSpeeds[0], motorSpeeds[1])
         motorC.run_forever(speed_sp = forwardSpeed * int(motorSpeeds[2]))
     else:
         robot.simpleDrive(forwardSpeed, forwardSpeed)
 
+robot.stop()
 motorC.stop()
 
