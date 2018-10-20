@@ -1,22 +1,21 @@
 from lib.state import State, States
 
-class Statemachine(environment):
+class Statemachine:
+    def __init__(self, environment):
+        self.states = {}
+        self.stateManual = State(States.MANUAL, environment)
+        self.stateChallenge1 = State(States.CHALLENGE1, environment)
+        self.stateChallenge2 = State(States.CHALLENGE2, environment)
+        self.stateChallenge3 = State(States.CHALLENGE3, environment)
+        self.stateChallenge4 = State(States.CHALLENGE4, environment)
+        self.stateChallenge5 = State(States.CHALLENGE5, environment)
+        self.stateChallenge6 = State(States.CHALLENGE6, environment)
+        self.stateTransit12 = State(States.TRANSIT12, environment)
+        self.stateTransit23 = State(States.TRANSIT23, environment)
+        self.stateTransit34 = State(States.TRANSIT34, environment)
+        self.stateTransit45 = State(States.TRANSIT45, environment)
+        self.stateTransit56 = State(States.TRANSIT56, environment)
 
-    states = {}
-    stateManual = State(States.MANUAL, environment)
-    stateChallenge1 = State(States.CHALLENGE1, environment)
-    stateChallenge2 = State(States.CHALLENGE2, environment)
-    stateChallenge3 = State(States.CHALLENGE3, environment)
-    stateChallenge4 = State(States.CHALLENGE4, environment)
-    stateChallenge5 = State(States.CHALLENGE5, environment)
-    stateChallenge6 = State(States.CHALLENGE6, environment)
-    stateTransit12 = State(States.TRANSIT12, environment)
-    stateTransit23 = State(States.TRANSIT23, environment)
-    stateTransit34 = State(States.TRANSIT34, environment)
-    stateTransit45 = State(States.TRANSIT45, environment)
-    stateTransit56 = State(States.TRANSIT56, environment)
-
-    def __init__(self):
         self.states[States.MANUAL] = self.stateManual
         self.states[States.CHALLENGE1] = self.stateChallenge1
         self.states[States.CHALLENGE2] = self.stateChallenge2
