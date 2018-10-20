@@ -4,7 +4,7 @@ from lib.enums import Colors
 class StateChallenge1(State):
 
     def __init__(self, id, environment):
-        super().__init__(self, id, environment)
+        super().__init__(id, environment)
         self._robot = environment["robot"]
         self._colorSensor = self._robot.colorSensor
 
