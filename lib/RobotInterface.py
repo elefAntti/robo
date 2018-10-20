@@ -99,10 +99,10 @@ class ArcWithGyro:
         self.gyro_odo = GyroOdometry(robot)
         self.start()
     def start(self):
-        self.gyro_odo.reset()
+        self.gyro_odo.reset(self.robot)
 
     def update(self):
-        self.gyro_odo.update()
+        self.gyro_odo.update(self.robot)
         dist = self.target.distance(self.gyro_odo.get_transform().offset)
         if dist < self.accuracy:
             self.robot.stop()
