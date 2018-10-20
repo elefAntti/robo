@@ -38,7 +38,9 @@ while not button.any():
         if not hack:
             print("Entering %d"%state) 
             hack = True
-            operation = RobotInterface.GyroPivot(robot, 90)
+            if robot.ultrasonicSensor.value() < 50:
+                robot.sound.beep()
+            #operation = RobotInterface.GyroPivot(robot, 90)
         ready = operation.update()
         if ready: 
             manual = True
