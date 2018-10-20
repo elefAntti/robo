@@ -21,8 +21,6 @@ class GyroPivot:
         self.accuracy = accuracy
         self.angle_diff = angle_diff
         self.start()
-        print("GyroPivot! %f"% robot.gyro.value())
-        print("target %f"% self.target_angle)
     def start(self):
         self.start_angle = self.robot.gyro.value() * -1
         self.target_angle = self.start_angle + self.angle_diff
@@ -39,6 +37,7 @@ class GyroPivot:
             self.robot.simpleDrive(-speed, speed)
         return False
 
+# need to move backwards? distance and speed should be BOTH negative
 class DriveForward:
     def __init__(self, robot, distance, speed = 200, accuracy = 0.01):
         self.robot = robot
