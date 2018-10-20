@@ -22,6 +22,6 @@ class RemoteControlSocket:
                 self.last_received = time.time()
         except:
             pass
-        return self.message[1:]
+        return self.message[1:], None
     def is_timeout(self):
         return time.time() - self.last_received > safety_time

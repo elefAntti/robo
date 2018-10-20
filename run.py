@@ -5,11 +5,12 @@ from time import sleep
 import socket
 import sys
 from lib import RemoteControlSocket, RobotInterface
+from statemachine import Statemachine
 
 forwardSpeed = 360
+print("Initializing")
 
 robot = RobotInterface.RobotInterface('outA','outB')
-#motorC = ev3.MediumMotor('outC')
 button = ev3.Button()
 
 print("Motors connected.")
@@ -18,26 +19,20 @@ remote = RemoteControlSocket.RemoteControlSocket()
 
 print("Socket set.")
 
+environment = { "robot": robot }
+
+fsm = Statemachine(environment)
+
 print("Connected")
 manual = True
 
 while not button.any():
-
-    ##if data == "manual":
-    ##    manual = True
-    ##    print("Switching to manual controls.")
-    ##elif data == "release":
-    ##    print("Continuing independent execution.")
-    ##    manual = False
-
     if manual:
-        motorSpeeds = remote.receive()
+        motorSpeeds, state = remote.receive()
         robot.simpleDrive(motorSpeeds[0], motorSpeeds[1])
-        #robot.logStuff()
-        #motorC.run_forever(speed_sp = forwardSpeed * int(motorSpeeds[2]))
     else:
-        robot.simpleDrive(forwardSpeed, forwardSpeed)
+        fsm.Run()
 
 robot.stop()
-#motorC.stop()
+
 
