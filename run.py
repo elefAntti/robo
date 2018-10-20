@@ -30,10 +30,11 @@ manual = True
 while not button.any():
     motorSpeeds, state = remote.receive()
     if state == 0:
-        if not manual:
-            fsm.SetState(States(state)) 
         manual = True
     else:
+        if manual:
+            fsm.SetState(States(state))
+            print("Entering %d"%state) 
         manual = False
 
     if manual:
