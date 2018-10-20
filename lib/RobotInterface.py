@@ -1,5 +1,32 @@
 from ev3dev import ev3
+from .vec2 import Vec2
 import time
+import math
+
+def getDifference(b1, b2):
+	r = (b2 - b1) % 360.0
+	# Python modulus has same sign as divisor, which is positive here,
+	# so no need to consider negative case
+	if r >= 180.0:
+		r -= 360.0
+	return r
+
+class GyroOdometry:
+    wheel_radius = 38 / 2
+    def __init__(self, robo):
+        self.reset(robo)
+    def reset(self, robo):
+        self.left_position = robo.left_motor.position
+        self.right_position = robo.right_motor.position
+        self.gyro_angle = robo.gyro.angle
+    def update(self, robo):
+        new_left = robo.left_motor.position 
+        new_right = robo.right_motor.position
+        d_left = (new_left - self.left_position) / 180.0 * math.pi
+        d_right = (new_right - self.right_position) / 180.0 * math.pi
+        forward = (d_left + d_right) * self.wheel_radius
+
+    
 
 class RobotInterface:
     
@@ -22,8 +49,8 @@ class RobotInterface:
         self.log = open("sensor.log", "w+")
 
     def logStuff(self):
-        self.log.write("%f, %f, %f"% \
-            (self.gyro.value(), self.left_motor.position, self.right_motor.position))
+        log.write("%f, %f, %f"% \
+            (self.gyro.angle, self.left_motor.position, self.right_motor.position))
 
     def simpleDrive(self, left_speed, right_speed):
         limiting_speed = max(abs(left_speed), abs(right_speed))
