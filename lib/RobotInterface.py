@@ -77,7 +77,7 @@ class RobotInterface:
             print("Gyro not found")
 
         try:
-            self.colorSensor = ev3.ColorSensor()
+            self.colorSensor = ev3.ColorSensor('in3')
             self.colorSensor.mode = 'COL-REFLECT'
         except:
             self.colorSensor = None
