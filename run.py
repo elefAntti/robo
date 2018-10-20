@@ -11,7 +11,7 @@ from statemachine import Statemachine
 forwardSpeed = 360
 print("Initializing")
 
-robot = RobotInterface.RobotInterface('outA','outB')
+robot = RobotInterface.RobotInterface('outA','outB', 2, 1)
 button = ev3.Button()
 
 print("Motors connected.")

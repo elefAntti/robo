@@ -35,9 +35,9 @@ class GyroOdometry:
         return Transform(heading = self.gyro_angle, offset = self.position)
 
 class RobotInterface:
-    def __init__(self, left_port, right_port, max_speed = 700, flip_dir=False):
-        self.left_motor = ev3.LargeMotor(left_port)
-        self.right_motor = ev3.LargeMotor(right_port)
+    def __init__(self, left_motor_port, right_motor_port, left_push_port, right_push_port, max_speed = 700, flip_dir=False):
+        self.left_motor = ev3.LargeMotor(left_motor_port)
+        self.right_motor = ev3.LargeMotor(right_motor_port)
         self.sound = ev3.Sound()
 
         try:
@@ -57,6 +57,18 @@ class RobotInterface:
         except:
             self.colorSensor = None
             print("Color sensor not found")
+
+        try:
+            self.left_push_sensor = ev3.TouchSensor(port = left_push_port)
+        except:
+            self.left_push_sensor = None
+            print("Left push sensor not found.")
+
+        try:
+            self.right_push_sensor = ev3.TouchSensor(port = right_push_port)
+        except:
+            self.right_push_sensor = None
+            print("Right push sensor not found.")
 
         self.max_speed = max_speed
         self.flip_dir = flip_dir
@@ -83,7 +95,7 @@ class RobotInterface:
         else:
             self.right_motor.run_forever(speed_sp = right_speed)
         #print( "L=%f, R=%f" % (left_speed, right_speed) )
-    
+
     def stop(self):
         self.left_motor.stop()
         self.right_motor.stop()
