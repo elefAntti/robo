@@ -43,26 +43,32 @@ ApplicationWindow
     {
         Button
         {
-            text: "Tele operation"
+            text: "Teleoperation"
             onClicked: backend.releaseManual(0)
         }
 
         Button
         {
-            text: "Challenge 1"
+            text: "Initial platform"
             onClicked: backend.releaseManual(1)
         } 
 
         Button
         {
-            text: "Challenge 2"
+            text: "Maze"
             onClicked: backend.releaseManual(2)
         }
 
         Button
         {
-            text: "Challenge 3"
+            text: "Bars"
             onClicked: backend.releaseManual(3)
+        }
+
+        Button
+        {
+            text: "Companion cube"
+            onClicked: backend.releaseManual(4)
         }
     }
 }
