@@ -7,11 +7,19 @@ import sys
 from lib import RemoteControlSocket, RobotInterface
 from lib.state import States
 from statemachine import Statemachine
+import lib.kinematics as kine
 
 forwardSpeed = 360
 print("Initializing")
 
-robot = RobotInterface.RobotInterface('outB','outA', flip_dir = True)
+corr_fact = 0.84 * 0.98
+
+kine_model = kine.KinematicModel(
+    axel_width = 0.11,
+    left_wheel_r = 0.038 / 2 * corr_fact,
+    right_wheel_r = 0.038 / 2 * corr_fact)
+
+robot = RobotInterface.RobotInterface('outB','outA', kine_model, flip_dir = True)
 button = ev3.Button()
 
 print("Motors connected.")
@@ -38,7 +46,8 @@ while not button.any():
         if not hack:
             print("Entering %d"%state) 
             hack = True
-            operation = RobotInterface.GyroPivot(robot, 90)
+            #operation = RobotInterface.GyroPivot(robot, 90)
+            operation = RobotInterface.DriveForward(robot, 0.13)
         ready = operation.update()
         if ready: 
             manual = True
