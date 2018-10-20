@@ -41,19 +41,20 @@ class Statemachine:
         self.stateChallenge5.NextState = States.TRANSIT56
         self.stateTransit56.NextState = States.CHALLENGE6
 
-        self.currentState = self.stateChallenge1
+        self.currentState = self.stateManual
         self.currentState.Enter()        
 
     # Base state machine loop. Should be called from e.g. main run loop once per cycle
     def Run(self):
         nextState = self.currentState.Update()
-
-        if nextState != self.currentState.Id:
-            self.currentState.Exit()
-            self.currentState = self.states[nextState]
-            self.currentState.Enter()
+        self._setStateIfChanged(nextState)
     
     # Force the state machine to enter a specific state
     def SetState(self, newState):
-        self.currentState = self.states[newState]
-        self.currentState.Enter()
+        self._setStateIfChanged(newState)
+
+    def _setStateIfChanged(self, newState):
+        if newState != self.currentState.Id:
+            self.currentState.Exit()
+            self.currentState = self.states[newState]
+            self.currentState.Enter()
