@@ -35,12 +35,15 @@ light.mode = 'COL-REFLECT'
 #lilTurn = 20
 #bigDiff = 130
 #lilDiff = 60
-turn = 20
-bright = 60
+turn = 200
+bright = 15
 
 def spin_around():
     lmotor = ev3.LargeMotor('outA')
     rmotor = ev3.LargeMotor('outB')
+    lmotor.stop()
+    rmotor.stop()
+
     while not button.any():
         #ll = llight.value()
         #rl = rlight.value()
@@ -48,7 +51,7 @@ def spin_around():
         #print(ll, rl, pos)
         print(light.value())
 
-        tspd = -30
+        tspd = -120
         rspd = 0
 
         #if (pos > bigDiff):
@@ -60,15 +63,18 @@ def spin_around():
         #elif (pos < -lilDiff):
         #    rspd = lilTurn
         if light.value() > bright:
-            rspd = turn
-        else:
             rspd = -turn
+        else:
+            rspd = turn
 
         right = (tspd+rspd)/2.0
         left = tspd-right
+        print(left, right)
         
         lmotor.run_forever(speed_sp=left)
         rmotor.run_forever(speed_sp=right)
+    lmotor.stop()
+    rmotor.stop()
 
 for i in range(5):
     print("Following a line")
