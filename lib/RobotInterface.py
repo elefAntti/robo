@@ -52,12 +52,8 @@ class RobotInterface:
             print("Gyro not found")
 
         try:
-            self.sound.beep()
-            time.sleep(2)
             self.colorSensor = ev3.ColorSensor()
             self.colorSensor.mode = 'COL-REFLECT'
-            time.sleep(2)
-            self.sound.beep()
         except:
             self.colorSensor = None
             print("Color sensor not found")

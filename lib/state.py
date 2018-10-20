@@ -23,6 +23,8 @@ class State():
         self.Id = id
         self.NextState = self.Id
         self._environment = environment
+        self._robot = environment["robot"]
+        self._sound = self._robot.sound
     
     # Update: Performs actions and returns what the next state should be.
     # Returns self if we should stay in this state.
@@ -32,9 +34,9 @@ class State():
     # Enter: We call this function once when we enter this state. Any initial
     # actions should be performed here.
     def Enter(self):
-        pass
+        self._sound.speak("Entering " + self.Id.name)
 
     # Exit: We call this function once when we leave this state. Any final
     # actions should be performed here.
     def Exit(self):
-        pass
+        self._sound.speak("Exiting " + self.Id.name)

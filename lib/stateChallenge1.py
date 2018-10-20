@@ -5,7 +5,6 @@ class StateChallenge1(State):
 
     def __init__(self, id, environment):
         super().__init__(id, environment)
-        self._robot = environment["robot"]
         self._colorSensor = self._robot.colorSensor
 
     def Update(self):
@@ -14,9 +13,10 @@ class StateChallenge1(State):
             self._robot.stop()
             return self.NextState
 
-        self._robot.SimpleDrive(500, 500)
+        self._robot.simpleDrive(500, 500)
 
         return self.Id
 
     def Enter(self):
+        super().Enter()
         self._colorSensor.mode = 'COL-COLOR'
