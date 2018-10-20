@@ -83,6 +83,20 @@ class RobotInterface:
             self.colorSensor = None
             print("Color sensor not found")
 
+        try:
+            self.frontColorSensor = ev3.ColorSensor('in1')
+            self.frontColorSensor.mode = 'COL-COLOR'
+        except:
+            self.frontColorSensor = None
+            print("Front color sensor not found")
+
+        try:
+            self.ultrasonicSensor = ev3.UltrasonicSensor()
+            self.ultrasonicSensor.mode = 'US-DIST-CM'
+        except:
+            self.ultrasonicSensor = None
+            print("Ultrasonic sensor not found")
+
         self.max_speed = max_speed
         self.flip_dir = flip_dir
         self.log = open("sensor.log", "w+")
