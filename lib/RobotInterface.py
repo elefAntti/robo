@@ -85,10 +85,10 @@ class RobotInterface:
         #print( "L=%f, R=%f" % (left_speed, right_speed) )
 
     def driveForwards(self, speed):
-        self.simpleDrive(speed, speed)
+        self.simpleDrive(abs(speed), abs(speed))
 
     def driveBackwards(self, speed):
-        self.simpleDrive(-speed, -speed)
+        self.simpleDrive(-abs(speed), -abs(speed))
 
     def driveForTime(self, left_speed, right_speed, driveTime):
         self.simpleDrive(left_speed, right_speed)
@@ -97,7 +97,11 @@ class RobotInterface:
 
     def driveForwardsForDistance(self, speed, distance):
         driveTime = distance / speed
-        self.driveForTime(speed, speed, driveTime)
+        self.driveForTime(abs(speed), abs(speed), driveTime)
+
+    def driveBackwardsForDistance(self, speed, distance):
+        driveTime = distance / speed
+        self.driveForTime(-abs(speed), -abs(speed), driveTime)
     
     def stop(self):
         self.left_motor.stop()
