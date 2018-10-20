@@ -83,6 +83,12 @@ class RobotInterface:
         else:
             self.right_motor.run_forever(speed_sp = right_speed)
         #print( "L=%f, R=%f" % (left_speed, right_speed) )
+
+    def driveForwards(self, speed):
+        self.simpleDrive(speed, speed)
+
+    def driveBackwards(self, speed):
+        self.simpleDrive(-speed, -speed)
     
     def stop(self):
         self.left_motor.stop()

@@ -17,7 +17,7 @@ class StateChallenge1(State):
             self._robot.stop()
             return self.NextState
 
-        self._robot.simpleDrive(500, 500)
+        self._robot.driveForwards(500)
 
         return self.Id
 
