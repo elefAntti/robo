@@ -29,6 +29,7 @@ class Backend(QObject):
         super().__init__(parent)
         self.keys = defaultdict(lambda:False)
         self.seq_no = 0
+        self.robot_state = 0
 
     @pyqtSlot(str, bool)
     def forward(self, pressed, down):
@@ -38,6 +39,7 @@ class Backend(QObject):
     @pyqtSlot(int)
     def releaseManual(self, challenge_id):
         print("Go to challenge %d"%challenge_id)
+        self.robot_state = challenge_id
 
     def get_command(self):
         leftMotorSpeed = 0
@@ -61,9 +63,9 @@ class Backend(QObject):
         return leftMotorSpeed, rightMotorSpeed
     def send_packet(self, _):
         command = self.get_command()
-        print("sending %f %f"%command)
-        sock.sendto(bytes("%d, %f, %f, %f" % \
-        (self.seq_no, command[0], command[1], 0), \
+        print("sending %f %f %d"%(command[0], command[1], self.robot_state))
+        sock.sendto(bytes("%d, %f, %f, %d" % \
+        (self.seq_no, command[0], command[1], self.robot_state), \
         "UTF-8"), address)
         self.seq_no += 1
 
