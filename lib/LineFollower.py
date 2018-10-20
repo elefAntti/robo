@@ -52,7 +52,7 @@ class LineFollower(State):
         return self.Id
 
     def Enter(self):
-        super().Enter()
+        self._sound.speak("Entering " + self.Id.name)
         self._colorSensor.mode = 'COL-REFLECT'
         self._gyro.mode = 'GYRO-ANG'
         self._turnRight = True
@@ -61,5 +61,5 @@ class LineFollower(State):
         self._lineFollowTimer = time.time()
 
     def Exit(self):
-        super().Exit()
+        self._sound.speak("Exiting " + self.Id.name)
         self._robot.stop()
