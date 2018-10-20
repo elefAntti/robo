@@ -34,6 +34,7 @@ class RobotInterface:
         self.left_motor = ev3.LargeMotor(left_port)
         self.right_motor = ev3.LargeMotor(right_port)
         self.sound = ev3.Sound()
+
         try:
             self.sound.beep()
             time.sleep(2)
@@ -44,6 +45,18 @@ class RobotInterface:
         except:
             self.gyro = None
             print("Gyro not found")
+
+        try:
+            self.sound.beep()
+            time.sleep(2)
+            self.colorSensor = ev3.ColorSensor()
+            self.colorSensor.mode = 'COL-REFLECT'
+            time.sleep(2)
+            self.sound.beep()
+        except:
+            self.colorSensor = None
+            print("Color sensor not found")
+
         self.max_speed = max_speed
         self.flip_dir = flip_dir
         self.log = open("sensor.log", "w+")
@@ -71,5 +84,5 @@ class RobotInterface:
         #print( "L=%f, R=%f" % (left_speed, right_speed) )
     
     def stop(self):
-        left_motor.stop()
-        right_motor.stop()
+        self.left_motor.stop()
+        self.right_motor.stop()
