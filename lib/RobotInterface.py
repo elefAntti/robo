@@ -11,6 +11,28 @@ import math
 #		r -= 360.0
 #	return r
 
+class GyroPivot:
+    def __init__(self, robot, angle_diff, speed = 150, accuracy = 1):
+        self.start_angle = robot.gyro.value() * -1
+        self.target_angle = self.start_angle + angle_diff
+        self.robot = robot
+        self.speed = speed
+        self.accuracy = accuracy
+        print("GyroPivot! %f"% robot.gyro.value())
+        print("target %f"% self.target_angle)
+    def update(self):
+        dAngle = self.target_angle - self.robot.gyro.value() * -1
+        k = max(abs(dAngle / 10), 1)
+        speed = self.speed * k
+        if abs(dAngle) < self.accuracy:
+            self.robot.stop()
+            return True
+        if dAngle < 0:
+            self.robot.simpleDrive(speed, -speed)
+        else:
+            self.robot.simpleDrive(-speed, speed)
+        return False
+
 class GyroOdometry:
     wheel_radius = 38 / 2
     def __init__(self, robo):
@@ -42,9 +64,12 @@ class RobotInterface:
 
         try:
             self.sound.beep()
-            time.sleep(2)
             self.gyro = ev3.GyroSensor()
+            self.gyro.mode='GYRO-CAL'
+            time.sleep(2)
+
             self.gyro.mode='GYRO-ANG'
+
             time.sleep(2)
             self.sound.beep()
         except:

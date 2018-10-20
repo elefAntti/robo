@@ -39,6 +39,8 @@ ApplicationWindow
                 backend.forward('d', false);
         }
     }
+    Column
+    {
     Row
     {
         Button
@@ -71,4 +73,13 @@ ApplicationWindow
             onClicked: backend.releaseManual(4)
         }
     }
+    Row
+    {
+        Button
+        {
+            text: "Hack"
+            onClicked: backend.releaseManual(666)
+        }
+    }
+}
 }
