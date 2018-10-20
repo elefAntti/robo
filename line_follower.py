@@ -29,6 +29,7 @@ rlight_port = 2
 
 llight = ev3.ColorSensor(port=llight_port)
 rlight = ev3.ColorSensor(port=rlight_port)
+button = ev3.Button()
 llight.mode = 'COL-REFLECT'
 rlight.mode = 'COL-REFLECT'
 
@@ -41,6 +42,7 @@ lilDiff = 60
 def spin_around():
     lmotor = ev3.LargeMotor('outA')
     rmotor = ev3.LargeMotor('outB')
+<<<<<<< a30d0c7b957671558a15a86dbd72b0be0e74fef7
 <<<<<<< 10f5043815b3e0c46952e9fb45c5963b47f5840b
     while not button.any():
         #ll = llight.value()
@@ -50,6 +52,9 @@ def spin_around():
         print(light.value())
 =======
     while True:
+=======
+    while not button.any():
+>>>>>>> deleted unused file, infinte loop termination
         ll = llight.value()
         rl = rlight.value()
         pos = ll-rl
