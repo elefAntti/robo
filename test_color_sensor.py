@@ -34,6 +34,8 @@ while not button.any():
         light.mode = 'COL-AMBIENT'
     elif data == 'x':
         light.mode = 'RGB-RAW'
+    elif data == 'c':
+        light.mode = 'COL-COLOR'
     elif data == 'z':
         print('bye bye')
         break
@@ -41,5 +43,8 @@ while not button.any():
         if data == 'x':
             print(light.value(0), light.value(1), light.value(2))
             #yellow is 0: 85-100, 1: 40-50, 2: 0-10
+        elif data == 'c':
+            colors=('unknown','black','blue','green','yellow','red','white','brown')
+            print(colors[light.value()])
         else:
             print(light.value())
