@@ -18,14 +18,16 @@ class LineFollower(State):
         self._turnMode = False
         self._repositionTime = 0.75
         self._lineFollowTime = 1.5
+        self._operation = None
         self._lineFollowTimer = 0
 
     def Update(self):
-        if self._turnMode:
-            operation = RobotInterface.GyroPivot(self._robot, 80 if self._turnRight else -80)
-            if operation.update():
-                self._turnMode = False
-                self._lineFollowTimer = time.time()
+        if self._operation is RobotInterface.DriveForward:
+            if self._operation.update():
+                self._operation = self._operation = RobotInterface.GyroPivot(self._robot, 80 if self._turnRight else -80)
+        elif self._operation is RobotInterface.GyroPivot:
+            if self._operation.update():
+                self._operation = None
         else:
             print(self._colorSensor.value())        
             rspd = 0
@@ -41,8 +43,8 @@ class LineFollower(State):
                     self._lastGyro = self._gyro.value()
 
             if abs(self._lastGyro - self._gyro.value()) > self._gyroTreshold and time.time() - self._lineFollowTimer > self._lineFollowTime:
-                self._robot.driveForTime(500, 500, self._repositionTime)
-                self._turnMode = True
+                #self._robot.driveForTime(500, 500, self._repositionTime)
+                self._operation = RobotInterface.DriveForward(self._robot, 0.13)
             right = (self._tspd + rspd)/2.0
             left = self._tspd - right
             self._robot.simpleDrive(-left, -right)
@@ -50,6 +52,7 @@ class LineFollower(State):
         return self.Id
 
     def Enter(self):
+        super().Enter()
         self._colorSensor.mode = 'COL-REFLECT'
         self._gyro.mode = 'GYRO-ANG'
         self._turnRight = True
@@ -58,4 +61,5 @@ class LineFollower(State):
         self._lineFollowTimer = time.time()
 
     def Exit(self):
+        super().Exit()
         self._robot.stop()
