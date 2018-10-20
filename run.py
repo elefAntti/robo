@@ -9,7 +9,7 @@ from lib import RemoteControlSocket, RobotInterface
 forwardSpeed = 360
 
 robot = RobotInterface.RobotInterface('outA','outB')
-motorC = ev3.MediumMotor('outC')
+#motorC = ev3.MediumMotor('outC')
 button = ev3.Button()
 
 print("Motors connected.")
@@ -33,10 +33,11 @@ while not button.any():
     if manual:
         motorSpeeds = remote.receive()
         robot.simpleDrive(motorSpeeds[0], motorSpeeds[1])
-        motorC.run_forever(speed_sp = forwardSpeed * int(motorSpeeds[2]))
+        robot.logStuff()
+        #motorC.run_forever(speed_sp = forwardSpeed * int(motorSpeeds[2]))
     else:
         robot.simpleDrive(forwardSpeed, forwardSpeed)
 
 robot.stop()
-motorC.stop()
+#motorC.stop()
 
