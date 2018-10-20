@@ -1,5 +1,6 @@
 from lib.state import State, States
 from lib.stateChallenge1 import StateChallenge1
+from lib.stateChallenge3 import StateChallenge3
 from lib.LineFollower import LineFollower
 from lib.stateDiscs import StateDiscs
 from lib.statePillars import StatePillars
@@ -10,7 +11,7 @@ class Statemachine:
         self.stateManual = State(States.MANUAL, environment)
         self.stateChallenge1 = StateChallenge1(States.CHALLENGE1, environment)
         self.stateChallenge2 = LineFollower(States.CHALLENGE2, environment)
-        self.stateChallenge3 = State(States.CHALLENGE3, environment)
+        self.stateChallenge3 = StateChallenge3(States.CHALLENGE3, environment)
         self.stateChallenge4 = State(States.CHALLENGE4, environment)
         self.stateChallenge5 = StateDiscs(States.CHALLENGE5, environment)
         self.stateChallenge6 = State(States.CHALLENGE6, environment)

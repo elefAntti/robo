@@ -21,8 +21,6 @@ class GyroPivot:
         self.accuracy = accuracy
         self.angle_diff = angle_diff
         self.start()
-        print("GyroPivot! %f"% robot.gyro.value())
-        print("target %f"% self.target_angle)
     def start(self):
         self.start_angle = self.robot.gyro.value() * -1
         self.target_angle = self.start_angle + self.angle_diff
@@ -38,7 +36,7 @@ class GyroPivot:
         else:
             self.robot.simpleDrive(-speed, speed)
         return False
-
+      
 class GyroWaitForRotation:
     def __init__(self, robot, angle_diff, accuracy = 1):
         self.start_angle = robot.gyro.value() * -1
@@ -59,6 +57,7 @@ class GyroWaitForRotation:
             return True
         return False
 
+# need to move backwards? distance and speed should be BOTH negative
 class DriveForward:
     def __init__(self, robot, distance, speed = 200, accuracy = 0.01):
         self.robot = robot
@@ -119,10 +118,10 @@ class ArcWithGyro:
         self.gyro_odo = GyroOdometry(robot)
         self.start()
     def start(self):
-        self.gyro_odo.reset(self.robot )
+        self.gyro_odo.reset(self.robot)
 
     def update(self):
-        self.gyro_odo.update(self.robot )
+        self.gyro_odo.update(self.robot)
         dist = self.target.distance(self.gyro_odo.get_transform().offset)
         if dist < self.accuracy:
             self.robot.stop()
@@ -157,18 +156,23 @@ class RobotInterface:
             print("Gyro not found")
 
         try:
-            self.colorSensor = ev3.ColorSensor('in3')
+            self.colorSensor = ev3.ColorSensor('in2')
             self.colorSensor.mode = 'COL-REFLECT'
         except:
             self.colorSensor = None
             print("Color sensor not found")
 
         try:
-            self.frontColorSensor = ev3.ColorSensor('in1')
-            self.frontColorSensor.mode = 'COL-COLOR'
+            self.left_push_sensor = ev3.TouchSensor('in3')
         except:
-            self.frontColorSensor = None
-            print("Front color sensor not found")
+            self.left_push_sensor = None
+            print("Left push sensor not found.")
+
+        try:
+            self.right_push_sensor = ev3.TouchSensor('in1')
+        except:
+            self.right_push_sensor = None
+            print("Right push sensor not found.")
 
         try:
             self.ultrasonicSensor = ev3.UltrasonicSensor()
