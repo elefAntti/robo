@@ -56,3 +56,4 @@ class Statemachine:
     # Force the state machine to enter a specific state
     def SetState(self, newState):
         self.currentState = self.states[newState]
+        self.currentState.Enter()

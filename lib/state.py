@@ -42,9 +42,9 @@ class State():
     # Enter: We call this function once when we enter this state. Any initial
     # actions should be performed here.
     def Enter(self):
-        return 0
+        pass
 
     # Exit: We call this function once when we leave this state. Any final
     # actions should be performed here.
     def Exit(self):
-        return 0
+        pass
