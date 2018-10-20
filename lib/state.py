@@ -27,6 +27,10 @@ class State():
         self._environment = environment
         self._robot = environment["robot"]
         self._sound = self._robot.sound
+        self._ultrasonic = self._robot.ultrasonicSensor
+        self._colorSensor = self._robot.colorSensor
+        self._frontColorSensor = self._robot.frontColorSensor
+        self._gyro = self._robot.gyro
     
     # Update: Performs actions and returns what the next state should be.
     # Returns self if we should stay in this state.
