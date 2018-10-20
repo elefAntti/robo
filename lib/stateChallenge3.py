@@ -1,6 +1,6 @@
 from lib.state import State, States
 from lib.enums import Colors
-import RobotInterface
+from lib.RobotInterface import DriveForward, GyroPivot
 
 class StateChallenge3(State):
 
@@ -10,6 +10,7 @@ class StateChallenge3(State):
         self._leftPushSensor = self._robot.left_push_sensor
         self._rightPushSensor = self._robot.right_push_sensor
         self._lastTurnWasRight = True
+        self._command = None
 
     def Update(self):
         detectedColor = self._colorSensor.value()
@@ -17,44 +18,34 @@ class StateChallenge3(State):
             self._robot.stop()
             return self.NextState
 
-        if self._rightPushSensor.is_pressed() and self._leftPushSensor.is_pressed():
+        if self._command is not None:
+            if self._command.update():
+                self._command = None
+        if self._rightPushSensor.is_pressed and self._leftPushSensor.is_pressed:
             #aja taakse noin 5cm
-            command = RobotInterface.DriveForward(self._robot, -0.05, speed = 200, accuracy = 0.01)
-            while not command.update():
-                pass
+            self._command = DriveForward(self._robot, -0.05, speed = 200, accuracy = 0.01)
             if self._lastTurnWasRight:
                 #käänny vasemmalle noin 20 astetta
-                command = RobotInterface.GyroPivot(self._robot, 20, speed = 150, accuracy = 1)
-                while not command.update():
-                    pass
+                self._command = GyroPivot(self._robot, 20, speed = 150, accuracy = 1)
                 self._lastTurnWasRight = False
             else:
                 #käänny oikealle noin 20 astetta
-                command = RobotInterface.GyroPivot(self._robot, -20, speed = 150, accuracy = 1)
+                self._command = GyroPivot(self._robot, -20, speed = 150, accuracy = 1)
                 self._lastTurnWasRight = True
-        elif self._rightPushSensor.is_pressed():
+        elif self._rightPushSensor.is_pressed:
             #aja taakse noin 5cm
-            command = RobotInterface.DriveForward(self._robot, -0.05, speed = 200, accuracy = 0.01)
-            while not command.update():
-                pass
+            self._command = DriveForward(self._robot, -0.05, speed = 200, accuracy = 0.01)
             #käänny vasemmalle noin 10 astetta
-            command = RobotInterface.GyroPivot(self._robot, 10, speed = 150, accuracy = 1)
-            while not command.update():
-                pass
-        elif self._leftPushSensor.is_pressed():
+            #self._command = GyroPivot(self._robot, 10, speed = 150, accuracy = 1)
+        elif self._leftPushSensor.is_pressed:
             #aja taakse noin 5 cm
-            command = RobotInterface.DriveForward(self._robot, -0.05, speed = 200, accuracy = 0.01)
-            while not command.update():
-                pass
+            self._command = DriveForward(self._robot, -0.05, speed = 200, accuracy = 0.01)
+            
             #käänny oikealle noin 10 astetta
-            command = RobotInterface.GyroPivot(self._robot, -10, speed = 150, accuracy = 1)
-            while not command.update():
-                pass
+            #self._command = GyroPivot(self._robot, -10, speed = 150, accuracy = 1)
         else:
             #aja eteen noin 10 cm
-            command = RobotInterface.DriveForward(self._robot, 0.10, speed = 200, accuracy = 0.01)
-            while not command.update():
-                pass
+            self._command = DriveForward(self._robot, 0.10, speed = 200, accuracy = 0.01)
         return self.Id
 
     def Enter(self):

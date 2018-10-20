@@ -24,7 +24,7 @@ class GyroPivot:
         print("GyroPivot! %f"% robot.gyro.value())
         print("target %f"% self.target_angle)
     def start(self):
-        self.start_angle = robot.gyro.value() * -1
+        self.start_angle = self.robot.gyro.value() * -1
         self.target_angle = self.start_angle + self.angle_diff
     def update(self):
         dAngle = self.target_angle - self.robot.gyro.value() * -1
@@ -103,14 +103,14 @@ class ArcWithGyro:
 
     def update(self):
         self.gyro_odo.update()
-        dist = self.target.distance(gyro_odo.get_transform().offset)
+        dist = self.target.distance(self.gyro_odo.get_transform().offset)
         if dist < self.accuracy:
             self.robot.stop()
             return True
 
         k = max(abs(dist / 0.10), 1)
         speed = self.speed * k 
-        command = Command.arc_to(gyro_odo.get_transform(), self.target, speed)
+        command = Command.arc_to(self.gyro_odo.get_transform(), self.target, speed)
         wheel_command = self.robot.kinematics.computeWheelCommand(command)
         self.robot.executeWheelCommand(wheel_command)
         return False
@@ -137,14 +137,14 @@ class RobotInterface:
             print("Gyro not found")
 
         try:
-            self.colorSensor = ev3.ColorSensor('in3')
+            self.colorSensor = ev3.ColorSensor('in2')
             self.colorSensor.mode = 'COL-REFLECT'
         except:
             self.colorSensor = None
             print("Color sensor not found")
 
         try:
-            self.left_push_sensor = ev3.TouchSensor('in4')
+            self.left_push_sensor = ev3.TouchSensor('in3')
         except:
             self.left_push_sensor = None
             print("Left push sensor not found.")
@@ -154,13 +154,6 @@ class RobotInterface:
         except:
             self.right_push_sensor = None
             print("Right push sensor not found.")
-
-        try:
-            self.frontColorSensor = ev3.ColorSensor('in1')
-            self.frontColorSensor.mode = 'COL-COLOR'
-        except:
-            self.frontColorSensor = None
-            print("Front color sensor not found")
 
         try:
             self.ultrasonicSensor = ev3.UltrasonicSensor()
