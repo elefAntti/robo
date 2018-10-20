@@ -19,24 +19,25 @@ class States(Enum):
 # TODO: Manual state needs to be able to force the state machine into any state.
 class State():
 
-    def __init__(self, id):
-        self.__id = id
-        self.__nextState = self.__id
+    def __init__(self, id, environment):
+        self._id = id
+        self._nextState = self._id
+        self._environment = environment
     
     # Name string for this state
     @property
     def Id(self):
-        return self.__id
+        return self._id
 
-    # A pointer to the next state
+    # A name of the next state
     @property
     def NextState(self):
-        return self.__nextState
+        return self._nextState
 
     # Update: Performs actions and returns what the next state should be.
     # Returns self if we should stay in this state.
     def Update(self):
-        return self.Id
+        return self.NextState
 
     # Enter: We call this function once when we enter this state. Any initial
     # actions should be performed here.
