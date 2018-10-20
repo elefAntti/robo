@@ -1,15 +1,15 @@
 from ev3dev import ev3
-from .vec2 import Vec2
+from .vec2 import Vec2, Transform
 import time
 import math
 
-def getDifference(b1, b2):
-	r = (b2 - b1) % 360.0
-	# Python modulus has same sign as divisor, which is positive here,
-	# so no need to consider negative case
-	if r >= 180.0:
-		r -= 360.0
-	return r
+#def getDifference(b1, b2):
+#	r = (b2 - b1) % 360.0
+#	# Python modulus has same sign as divisor, which is positive here,
+#	# so no need to consider negative case
+#	if r >= 180.0:
+#		r -= 360.0
+#	return r
 
 class GyroOdometry:
     wheel_radius = 38 / 2
@@ -19,17 +19,22 @@ class GyroOdometry:
         self.left_position = robo.left_motor.position
         self.right_position = robo.right_motor.position
         self.gyro_angle = robo.gyro.angle
+        self.position = Vec2.zero()
     def update(self, robo):
         new_left = robo.left_motor.position 
         new_right = robo.right_motor.position
+        new_angle = robo.gyro.angle
         d_left = (new_left - self.left_position) / 180.0 * math.pi
         d_right = (new_right - self.right_position) / 180.0 * math.pi
         forward = (d_left + d_right) * self.wheel_radius
-
-    
+        mid_angle = (new_angle + self.gyro_angle) / 2.0
+        delta = Vec2.fromPolar(mid_angle, forward)
+        self.position = self.position + delta
+        self.gyro_angle = new_angle
+    def get_transform(self):
+        return Transform(heading = self.gyro_angle, offset = self.position)
 
 class RobotInterface:
-    
     def __init__(self, left_port, right_port, max_speed = 700, flip_dir=False):
         self.left_motor = ev3.LargeMotor(left_port)
         self.right_motor = ev3.LargeMotor(right_port)
