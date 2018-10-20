@@ -5,7 +5,6 @@ class StateChallenge1(State):
 
     def __init__(self, id, environment):
         super().__init__(id, environment)
-        self._colorSensor = self._robot.colorSensor
         self._latestColor = Colors.UNKNOWN
 
     def Update(self):
@@ -17,7 +16,12 @@ class StateChallenge1(State):
             self._robot.stop()
             return self.NextState
 
-        self._robot.driveForwards(500)
+        if self._ultrasonic.value() < 100:
+            # turn left if there's something straight ahead
+            self._robot.simpleDrive(-100, 100)
+        else:
+            # Drive straight ahead
+            self._robot.driveForwards(500)
 
         return self.Id
 

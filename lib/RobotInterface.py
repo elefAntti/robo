@@ -137,18 +137,20 @@ class RobotInterface:
             print("Gyro not found")
 
         try:
-            self.colorSensor = ev3.ColorSensor('in3')
+            self.colorSensor = ev3.ColorSensor('in2')
             self.colorSensor.mode = 'COL-REFLECT'
         except:
             self.colorSensor = None
             print("Color sensor not found")
 
-        try:
-            self.frontColorSensor = ev3.ColorSensor('in1')
-            self.frontColorSensor.mode = 'COL-COLOR'
-        except:
-            self.frontColorSensor = None
-            print("Front color sensor not found")
+        #try:
+        #    self.frontColorSensor = ev3.ColorSensor('in1')
+        #    self.frontColorSensor.mode = 'COL-COLOR'
+        #except:
+        #    self.frontColorSensor = None
+        #    print("Front color sensor not found")
+
+        self.frontColorSensor = None
 
         try:
             self.ultrasonicSensor = ev3.UltrasonicSensor()
