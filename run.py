@@ -33,7 +33,7 @@ while not button.any():
     if manual:
         motorSpeeds = remote.receive()
         robot.simpleDrive(motorSpeeds[0], motorSpeeds[1])
-        robot.logStuff()
+        #robot.logStuff()
         #motorC.run_forever(speed_sp = forwardSpeed * int(motorSpeeds[2]))
     else:
         robot.simpleDrive(forwardSpeed, forwardSpeed)

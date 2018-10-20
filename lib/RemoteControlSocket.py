@@ -14,7 +14,7 @@ class RemoteControlSocket:
         try:
             data, client = self.sock.recvfrom(128)
             data = data.decode("utf-8")
-            print("Received remote: %s"%str(data))
+            #print("Received remote: %s"%str(data))
             new_message = [float(x) for x in data.split(",")]
             #The index 0 is the sequence number
             if new_message[0] < 10 or new_message[0] > self.message[0]:

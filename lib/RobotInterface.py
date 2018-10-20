@@ -22,7 +22,7 @@ class RobotInterface:
         self.log = open("sensor.log", "w+")
 
     def logStuff(self):
-        log.write("%f, %f, %f"% \
+        self.log.write("%f, %f, %f"% \
             (self.gyro.value(), self.left_motor.position, self.right_motor.position))
 
     def simpleDrive(self, left_speed, right_speed):
@@ -41,7 +41,7 @@ class RobotInterface:
             self.right_motor.stop()
         else:
             self.right_motor.run_forever(speed_sp = right_speed)
-        print( "L=%f, R=%f" % (left_speed, right_speed) )
+        #print( "L=%f, R=%f" % (left_speed, right_speed) )
     
     def stop(self):
         left_motor.stop()
