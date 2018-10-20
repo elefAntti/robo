@@ -10,7 +10,7 @@ class StateChallenge3(State):
         self._leftPushSensor = self._robot.left_push_sensor
         self._rightPushSensor = self._robot.right_push_sensor
         self._lastTurnWasRight = True
-        self._command = None
+        self._command = GyroPivot(self._robot, -20, speed = 150, accuracy = 1)
 
     def Update(self):
         detectedColor = self._colorSensor.value()
@@ -21,36 +21,36 @@ class StateChallenge3(State):
         if self._command is not None:
             if self._command.update():
                 self._command = None
-        if self._rightPushSensor.is_pressed and self._leftPushSensor.is_pressed:
+        elif self._rightPushSensor.is_pressed and self._leftPushSensor.is_pressed:
             #aja taakse noin 5cm
             self._command = DriveForward(self._robot, -0.05, speed = -200, accuracy = 0.01)
             if self._lastTurnWasRight:
                 #peruuta 5 cm
                 #käänny vasemmalle noin 20 astetta
                 self._command = CommandSequence(
-                    DriveForward(self._robot, -0.05, speed = -200, accuracy = 0.01),
-                    GyroPivot(self._robot, 10, speed = 150, accuracy = 1)
+                    DriveForward(self._robot, -0.10, speed = -200, accuracy = 0.01),
+                    GyroPivot(self._robot, 40, speed = 150, accuracy = 1)
                 )
             else:
                 #peruuta 5 cm
                 #käänny oikealle noin 20 astetta
                 self._command = CommandSequence(
-                    DriveForward(self._robot, -0.05, speed = -200, accuracy = 0.01),
-                    GyroPivot(self._robot, -20, speed = 150, accuracy = 1)
+                    DriveForward(self._robot, -0.10, speed = -200, accuracy = 0.01),
+                    GyroPivot(self._robot, -40, speed = 150, accuracy = 1)
                 )
         elif self._rightPushSensor.is_pressed:
             #aja taakse noin 5cm
             #käänny noin 10 astetta oikealle
             self._command = CommandSequence(
                 DriveForward(self._robot, -0.05, speed = -200, accuracy = 0.01),
-                GyroPivot(self._robot, 10, speed = 150, accuracy = 1)
+                GyroPivot(self._robot, 20, speed = 150, accuracy = 1)
             )
         elif self._leftPushSensor.is_pressed:
             #aja taakse noin 5 cm
             #käänny oikealle noin 10 astetta
             self._command = CommandSequence(
                 DriveForward(self._robot, -0.05, speed = -200, accuracy = 0.01),
-                GyroPivot(self._robot, -10, speed = 150, accuracy = 1)
+                GyroPivot(self._robot, -20, speed = 150, accuracy = 1)
             )
         else:
             #aja eteen noin 10 cm
