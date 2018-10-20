@@ -231,3 +231,22 @@ class RobotInterface:
     def stop(self):
         self.left_motor.stop()
         self.right_motor.stop()
+
+
+class CommandSequence:
+    def __init__(self, *children):
+        self.children = children
+        self.start()
+    def start(self):
+        self.currentChild = 0
+        self.children[self.currentChild].start()
+    def update(self):
+        if self.currentChild >= len(self.children):
+            return True
+        done = self.children[self.currentChild].update()
+        if done:
+            self.currentChild += 1
+            if self.currentChild >= len(self.children):
+                return True
+            self.children[self.currentChild].start()
+        return False

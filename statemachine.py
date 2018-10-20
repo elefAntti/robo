@@ -1,13 +1,14 @@
 from lib.state import State, States
 from lib.stateChallenge1 import StateChallenge1
 from lib.stateChallenge3 import StateChallenge3
+from lib.LineFollower import LineFollower
 
 class Statemachine:
     def __init__(self, environment):
         self.states = {}
         self.stateManual = State(States.MANUAL, environment)
         self.stateChallenge1 = StateChallenge1(States.CHALLENGE1, environment)
-        self.stateChallenge2 = State(States.CHALLENGE2, environment)
+        self.stateChallenge2 = LineFollower(States.CHALLENGE2, environment)
         self.stateChallenge3 = StateChallenge3(States.CHALLENGE3, environment)
         self.stateChallenge4 = State(States.CHALLENGE4, environment)
         self.stateChallenge5 = State(States.CHALLENGE5, environment)
