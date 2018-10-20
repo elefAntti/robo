@@ -1,5 +1,6 @@
 from lib.state import State, States
 from lib.stateChallenge1 import StateChallenge1
+from lib.stateChallenge4 import StateChallenge4
 from lib.stateTransit import StateTransit
 
 class Statemachine:
@@ -9,7 +10,7 @@ class Statemachine:
         self.stateChallenge1 = StateChallenge1(States.CHALLENGE1, environment)
         self.stateChallenge2 = State(States.CHALLENGE2, environment)
         self.stateChallenge3 = State(States.CHALLENGE3, environment)
-        self.stateChallenge4 = State(States.CHALLENGE4, environment)
+        self.stateChallenge4 = StateChallenge4(States.CHALLENGE4, environment)
         self.stateChallenge5 = State(States.CHALLENGE5, environment)
         self.stateChallenge6 = State(States.CHALLENGE6, environment)
         self.stateChallenge7 = State(States.CHALLENGE7, environment)
