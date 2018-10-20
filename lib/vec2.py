@@ -82,6 +82,9 @@ class Vec2(namedtuple('Vec2', ['x', 'y'])):
 
     def projectionOn(self, other):
         return self.dot(other.normalized())
+    
+    def distance(self, other):
+        return (self - other).length
 
 class Transform(namedtuple('Transform', ['heading', 'offset'])):
     __slots__ = ()
