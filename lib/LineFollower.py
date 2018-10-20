@@ -17,10 +17,11 @@ class LineFollower(State):
         self._turnRight = True
         self._lastGyro = 0
         self._turnMode = False
+        self._repositionTime = 0.25
 
     def Update(self):
         if self._turnMode:
-            operation = RobotInterface.GyroPivot(self._robot, 90 if self._turnRight else -90)
+            operation = RobotInterface.GyroPivot(self._robot, 80 if self._turnRight else -80)
             if operation.update():
                 self._turnMode = False
         else:
@@ -38,7 +39,7 @@ class LineFollower(State):
                     self._lastGyro = self._gyro.value()
 
             if abs(self._lastGyro - self._gyro.value()) > self._gyroTreshold:
-                self._robot.driveForTime(500, 500, 0.25)
+                self._robot.driveForTime(500, 500, self._repositionTime)
                 self._turnMode = True
             right = (self._tspd + rspd)/2.0
             left = self._tspd - right
