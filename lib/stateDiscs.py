@@ -11,6 +11,8 @@ class StateDiscs(State):
         super().__init__(id, environment)
         robot_len = 0.17
         self.command_sequence = CommandSequence(
+            WaitCommand(0.5),
+            GyroInitCommand(self._robot),
             DriveForward(self._robot, 0.422 + robot_len),
             GyroWaitForRotation(self._robot, -80 ),
             DriveForward(self._robot, (0.03 + 2* robot_len)*-1, speed=-200),

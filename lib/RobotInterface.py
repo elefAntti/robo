@@ -45,8 +45,6 @@ class GyroWaitForRotation:
         self.accuracy = accuracy
         self.angle_diff = angle_diff
         self.start()
-        print("GyroPivot! %f"% robot.gyro.value())
-        print("target %f"% self.target_angle)
     def start(self):
         self.start_angle = self.robot.gyro.value() * -1
         self.target_angle = self.start_angle + self.angle_diff
@@ -282,14 +280,14 @@ class WaitCommand:
 class GyroInitCommand:
     def __init__(self, robot):
         self.robot = robot
-        self.start()
+        #self.start()
     def start(self):
         self.start_time = time.time()
         self.robot.sound.beep()
         self.robot.gyro.mode='GYRO-CAL'
     def update(self):
         if (time.time() - self.start_time) >= 2:
-            self.gyro.mode='GYRO-ANG'
+            self.robot.gyro.mode='GYRO-ANG'
             self.robot.sound.beep()
             return True
         return False

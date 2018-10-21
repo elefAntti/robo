@@ -10,6 +10,9 @@ class StateChallenge3(State):
         self._leftPushSensor = self._robot.left_push_sensor
         self._rightPushSensor = self._robot.right_push_sensor
         self._lastTurnWasRight = True
+        self._command = None
+        
+    def Enter(self):
         self._command = GyroPivot(self._robot, -20, speed = 150, accuracy = 1)
 
     def Update(self):
