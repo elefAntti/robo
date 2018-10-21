@@ -83,7 +83,23 @@ class DriveForward:
         self.robot.simpleDrive(speed, speed)
         return False
 
-#Waits for the robot to move a given distance, kind of useless by it self
+class DriveToAWall:
+    def __init__(self, robot, speed = 200, both_sensors = False):
+        self.robot = robot
+        self.speed = speed
+        self.both_sensors = both_sensors
+        self.start()
+    def start(self):
+        pass
+    def update(self):
+        self.robot.simpleDrive(self.speed, self.speed)
+        if self.robot.left_push_sensor.value() or self.robot.left_push_sensor.value():
+            return not self.both_sensors
+        if self.robot.left_push_sensor.value() and self.robot.left_push_sensor.value():
+            return True        
+        return False
+
+#Waits for the robot to move a given distance, kind of useless by it self but used in other tasks
 class WaitForDistance:
     def __init__(self, robot, distance, accuracy = 0.01):
         self.robot = robot
@@ -208,6 +224,8 @@ class RobotInterface:
         except:
             self.left_push_sensor = None
             print("Left push sensor not found.")
+
+        self.frontColorSensor = None
 
         try:
             self.right_push_sensor = ev3.TouchSensor('in1')
