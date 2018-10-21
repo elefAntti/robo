@@ -11,7 +11,7 @@ class StateDiscs(State):
         super().__init__(id, environment)
         robot_len = 0.17
         self.command_sequence = CommandSequence(
-            WaitCommand(0.5),
+            WaitCommand(self._robot, 0.5),
             GyroInitCommand(self._robot),
             DriveForward(self._robot, 0.422 + robot_len),
             GyroWaitForRotation(self._robot, -80 ),
@@ -23,7 +23,8 @@ class StateDiscs(State):
             GyroPivot(self._robot, -120),
             DriveForward(self._robot, 0.5)
         )
-
+    def Enter(self):
+        self._robot.resetOdometry()
     def Update(self):
         if self.command_sequence.update():
             return self.NextState
