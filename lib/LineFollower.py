@@ -15,18 +15,19 @@ class LineFollower(State):
         self._gyroTreshold = 20
         self._repositionTime = 0.75
         self._lineFollowTime = 1.5
-        self._operation = RobotInterface.DriveForward(robot=self._robot, distance=0.05)
+        self._operation = RobotInterface.DriveForward(robot=self._robot, distance=0.01)
 
     def Update(self):
-        if self._operation is RobotInterface.GyroPivot and self._operation.update():
+        finished = self._operation.update()
+        if self._operation is RobotInterface.GyroPivot and finished:
             self.operation = RobotInterface.DriveForward(robot=self._robot, speed=-200, distance=0.10)
         if self._colorSensor.value() < self._bright:
             self.operation = (
                 RobotInterface.GyroPivot(robot=self._robot, angle_diff=-5),
                 RobotInterface.GyroPivot(robot=self._robot, angle_diff=5)
             )
-        else:
-            self.operation = RobotInterface.DriveForward(robot=self._robot, distance=0.05)
+        elif self._operation is RobotInterface.DriveForward and finished:
+            self._operation = RobotInterface.DriveForward(robot=self._robot, distance=0.01)
 
         return self.Id
 
