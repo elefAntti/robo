@@ -83,6 +83,49 @@ class DriveForward:
         self.robot.simpleDrive(speed, speed)
         return False
 
+#Waits for the robot to move a given distance, kind of useless by it self
+class WaitForDistance:
+    def __init__(self, robot, distance, accuracy = 0.01):
+        self.robot = robot
+        self.accuracy = accuracy
+        self.distance = distance
+        self.start()
+    def start(self):
+        self.left_position = self.robot.left_motor_pos
+        self.right_position = self.robot.right_motor_pos
+    def update(self):
+        new_left = self.robot.left_motor_pos
+        new_right = self.robot.right_motor_pos
+        d_left = (new_left - self.left_position) / 180.0 * math.pi
+        d_right = (new_right - self.right_position) / 180.0 * math.pi
+        forward = (d_left * self.robot.kinematics.left_wheel_r\
+         + d_right * self.robot.kinematics.right_wheel_r) / 2.0
+
+        diff = self.distance - forward
+        if abs(diff) < self.accuracy:
+            self.robot.stop()
+            return True
+        return False
+
+class LineFollowCommand:
+    def __init__(self, robot, distance, accuracy = 0.01):
+        self.robot = robot
+        self._tspd = -240
+        self.wait = WaitForDistance(robot, distance, accuracy)
+    def start(self):
+        self.wait.start()
+    def update(self):
+        if self.wait.update():
+            return True
+        if self.robot.colorSensor.value() > self._bright:
+            rspd = -self._turn
+        else:
+            rspd = self._turn
+        right = (self._tspd + rspd)/2.0
+        left = self._tspd - right
+        self.robot.simpleDrive(-left, -right)
+        return False
+
 class GyroOdometry:
     wheel_radius = 38 / 2
     def __init__(self, robo):
@@ -248,6 +291,10 @@ class RobotInterface:
     def stop(self):
         self.left_motor.stop()
         self.right_motor.stop()
+    
+    def resetOdometry(self):
+        self.left_motor.position = 0
+        self.right_motor.position = 0
 
 
 class CommandSequence:
@@ -269,11 +316,13 @@ class CommandSequence:
         return False
 
 class WaitCommand:
-    def __init__(self, duration):
+    def __init__(self, robot, duration):
+        self.robot = robot
         self.duration = duration
         self.start()
     def start(self):
         self.start_time = time.time()
+        self.robot.stop()
     def update(self):
         return (time.time() - self.start_time) >= self.duration
 
@@ -291,3 +340,5 @@ class GyroInitCommand:
             self.robot.sound.beep()
             return True
         return False
+
+
