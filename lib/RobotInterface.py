@@ -21,10 +21,8 @@ class GyroPivot:
         self.accuracy = accuracy
         self.angle_diff = angle_diff
         self.start()
-        print("GyroPivot! %f"% robot.gyro.value())
-        print("target %f"% self.target_angle)
     def start(self):
-        self.start_angle = robot.gyro.value() * -1
+        self.start_angle = self.robot.gyro.value() * -1
         self.target_angle = self.start_angle + self.angle_diff
     def update(self):
         dAngle = self.target_angle - self.robot.gyro.value() * -1
@@ -38,7 +36,26 @@ class GyroPivot:
         else:
             self.robot.simpleDrive(-speed, speed)
         return False
+      
+class GyroWaitForRotation:
+    def __init__(self, robot, angle_diff, accuracy = 1):
+        self.start_angle = robot.gyro.value() * -1
+        self.target_angle = self.start_angle + angle_diff
+        self.robot = robot
+        self.accuracy = accuracy
+        self.angle_diff = angle_diff
+        self.start()
+    def start(self):
+        self.start_angle = self.robot.gyro.value() * -1
+        self.target_angle = self.start_angle + self.angle_diff
+    def update(self):
+        dAngle = self.target_angle - self.robot.gyro.value() * -1
 
+        if abs(dAngle) < self.accuracy:
+            return True
+        return False
+
+# need to move backwards? distance and speed should be BOTH negative
 class DriveForward:
     def __init__(self, robot, distance, speed = 200, accuracy = 0.01):
         self.robot = robot
@@ -64,6 +81,49 @@ class DriveForward:
         k = max(abs(diff / 0.10), 1)
         speed = self.speed * k 
         self.robot.simpleDrive(speed, speed)
+        return False
+
+#Waits for the robot to move a given distance, kind of useless by it self
+class WaitForDistance:
+    def __init__(self, robot, distance, accuracy = 0.01):
+        self.robot = robot
+        self.accuracy = accuracy
+        self.distance = distance
+        self.start()
+    def start(self):
+        self.left_position = self.robot.left_motor_pos
+        self.right_position = self.robot.right_motor_pos
+    def update(self):
+        new_left = self.robot.left_motor_pos
+        new_right = self.robot.right_motor_pos
+        d_left = (new_left - self.left_position) / 180.0 * math.pi
+        d_right = (new_right - self.right_position) / 180.0 * math.pi
+        forward = (d_left * self.robot.kinematics.left_wheel_r\
+         + d_right * self.robot.kinematics.right_wheel_r) / 2.0
+
+        diff = self.distance - forward
+        if abs(diff) < self.accuracy:
+            self.robot.stop()
+            return True
+        return False
+
+class LineFollowCommand:
+    def __init__(self, robot, distance, accuracy = 0.01):
+        self.robot = robot
+        self._tspd = -240
+        self.wait = WaitForDistance(robot, distance, accuracy)
+    def start(self):
+        self.wait.start()
+    def update(self):
+        if self.wait.update():
+            return True
+        if self.robot.colorSensor.value() > self._bright:
+            rspd = -self._turn
+        else:
+            rspd = self._turn
+        right = (self._tspd + rspd)/2.0
+        left = self._tspd - right
+        self.robot.simpleDrive(-left, -right)
         return False
 
 class GyroOdometry:
@@ -99,18 +159,18 @@ class ArcWithGyro:
         self.gyro_odo = GyroOdometry(robot)
         self.start()
     def start(self):
-        self.gyro_odo.reset()
+        self.gyro_odo.reset(self.robot)
 
     def update(self):
-        self.gyro_odo.update()
-        dist = self.target.distance(gyro_odo.get_transform().offset)
+        self.gyro_odo.update(self.robot)
+        dist = self.target.distance(self.gyro_odo.get_transform().offset)
         if dist < self.accuracy:
             self.robot.stop()
             return True
 
         k = max(abs(dist / 0.10), 1)
         speed = self.speed * k 
-        command = Command.arc_to(gyro_odo.get_transform(), self.target, speed)
+        command = Command.arc_to(self.gyro_odo.get_transform(), self.target, speed)
         wheel_command = self.robot.kinematics.computeWheelCommand(command)
         self.robot.executeWheelCommand(wheel_command)
         return False
@@ -143,14 +203,19 @@ class RobotInterface:
             self.colorSensor = None
             print("Color sensor not found")
 
-        #try:
-        #    self.frontColorSensor = ev3.ColorSensor('in1')
-        #    self.frontColorSensor.mode = 'COL-COLOR'
-        #except:
-        #    self.frontColorSensor = None
-        #    print("Front color sensor not found")
+        try:
+            self.left_push_sensor = ev3.TouchSensor('in3')
+        except:
+            self.left_push_sensor = None
+            print("Left push sensor not found.")
 
         self.frontColorSensor = None
+
+        try:
+            self.right_push_sensor = ev3.TouchSensor('in1')
+        except:
+            self.right_push_sensor = None
+            print("Right push sensor not found.")
 
         try:
             self.ultrasonicSensor = ev3.UltrasonicSensor()
@@ -228,3 +293,54 @@ class RobotInterface:
     def stop(self):
         self.left_motor.stop()
         self.right_motor.stop()
+    
+    def resetOdometry(self):
+        self.left_motor.position = 0
+        self.right_motor.position = 0
+
+
+class CommandSequence:
+    def __init__(self, *children):
+        self.children = children
+        self.start()
+    def start(self):
+        self.currentChild = 0
+        self.children[self.currentChild].start()
+    def update(self):
+        if self.currentChild >= len(self.children):
+            return True
+        done = self.children[self.currentChild].update()
+        if done:
+            self.currentChild += 1
+            if self.currentChild >= len(self.children):
+                return True
+            self.children[self.currentChild].start()
+        return False
+
+class WaitCommand:
+    def __init__(self, robot, duration):
+        self.robot = robot
+        self.duration = duration
+        self.start()
+    def start(self):
+        self.start_time = time.time()
+        self.robot.stop()
+    def update(self):
+        return (time.time() - self.start_time) >= self.duration
+
+class GyroInitCommand:
+    def __init__(self, robot):
+        self.robot = robot
+        #self.start()
+    def start(self):
+        self.start_time = time.time()
+        self.robot.sound.beep()
+        self.robot.gyro.mode='GYRO-CAL'
+    def update(self):
+        if (time.time() - self.start_time) >= 2:
+            self.robot.gyro.mode='GYRO-ANG'
+            self.robot.sound.beep()
+            return True
+        return False
+
+

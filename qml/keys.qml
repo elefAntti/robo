@@ -72,6 +72,11 @@ ApplicationWindow
             text: "Companion cube"
             onClicked: backend.releaseManual(4)
         }
+        Button
+        {
+            text: "Discs of Doom"
+            onClicked: backend.releaseManual(5)
+        }
     }
     Row
     {
