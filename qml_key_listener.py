@@ -13,7 +13,7 @@ import socket
 manual = False
 release = False
 
-ip = '192.168.43.21'
+ip = '192.168.43.21' # TODO: Replace IP here!
 scheduler = QtScheduler(QtCore)
 
 # Create a TCP/IP socket
