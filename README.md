@@ -1,6 +1,7 @@
 # robo
 
-kinematics code for a differential drive robot and an ui to test it.
+- robot code for Robot Uprising 2018 Hackathon
+- kinematics code for a differential drive robot and an ui to test it.
 
 ## How to use
 
