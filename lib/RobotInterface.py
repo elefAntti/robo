@@ -38,20 +38,19 @@ class GyroPivot:
         return False
       
 class GyroWaitForRotation:
-    def __init__(self, robot, angle_diff, accuracy = 1):
-        self.start_angle = robot.gyro.value() * -1
+    def __init__(self, robot, angle_diff):
         self.target_angle = self.start_angle + angle_diff
         self.robot = robot
-        self.accuracy = accuracy
         self.angle_diff = angle_diff
         self.start()
     def start(self):
-        self.start_angle = self.robot.gyro.value() * -1
-        self.target_angle = self.start_angle + self.angle_diff
+        self.target_angle = self.robot.gyro_angle_deg + self.angle_diff
     def update(self):
-        dAngle = self.target_angle - self.robot.gyro.value() * -1
-
-        if abs(dAngle) < self.accuracy:
+        if self.angle_diff == 0:
+            return True 
+        if self.angle_diff > 0 and self.robot.gyro_angle_deg > self.target_angle:
+            return True
+        if self.angle_diff < 0 and self.robot.gyro_angle_deg < self.target_angle:
             return True
         return False
 
