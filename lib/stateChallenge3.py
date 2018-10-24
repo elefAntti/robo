@@ -59,7 +59,3 @@ class StateChallenge3(State):
             #aja eteen noin 10 cm
             self._command = DriveForward(self._robot, 0.10, speed = 200, accuracy = 0.01)
         return self.Id
-
-    def Enter(self):
-        super().Enter()
-        self._colorSensor.mode = 'COL-COLOR'

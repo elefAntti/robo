@@ -93,9 +93,9 @@ class DriveToAWall:
         pass
     def update(self):
         self.robot.simpleDrive(self.speed, self.speed)
-        if self.robot.left_push_sensor.value() or self.robot.left_push_sensor.value():
+        if self.robot.left_push_sensor.value() or self.robot.right_push_sensor.value():
             return not self.both_sensors
-        if self.robot.left_push_sensor.value() and self.robot.left_push_sensor.value():
+        if self.robot.left_push_sensor.value() and self.robot.right_push_sensor.value():
             return True        
         return False
 
@@ -127,6 +127,8 @@ class LineFollowCommand:
     def __init__(self, robot, distance, accuracy = 0.01):
         self.robot = robot
         self._tspd = -240
+        self._bright = 150
+        self._turn = 50
         self.wait = WaitForDistance(robot, distance, accuracy)
     def start(self):
         self.wait.start()
