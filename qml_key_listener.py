@@ -42,25 +42,23 @@ class Backend(QObject):
         self.robot_state = challenge_id
 
     def get_command(self):
-        leftMotorSpeed = 0
-        rightMotorSpeed = 0
         forward = self.keys['w'] and not self.keys['s']
         backward = self.keys['s'] and not self.keys['w']
         right = self.keys['d'] and not self.keys['a']
         left  = self.keys['a'] and not self.keys['d']
+        fwd_speed = 0
+        turn_speed = 0
+
         if forward:
-            leftMotorSpeed += 500
-            rightMotorSpeed += 500
+            fwd_speed = 0.14
         if backward:
-            leftMotorSpeed -= 500
-            rightMotorSpeed -= 500
+            fwd_speed = -0.14
         if right:
-            rightMotorSpeed -= 250
-            leftMotorSpeed += 250
+            turn_speed = -1.24
         if left:
-            rightMotorSpeed += 250
-            leftMotorSpeed -= 250
-        return leftMotorSpeed, rightMotorSpeed
+            turn_speed = 1.24
+        return fwd_speed, turn_speed
+
     def send_packet(self, _):
         command = self.get_command()
         print("sending %f %f %d"%(command[0], command[1], self.robot_state))

@@ -1,5 +1,6 @@
 import socket
 import time
+from . import kinematics as kine
 
 class RemoteControlSocket:
     safety_time = 3.0
@@ -22,6 +23,6 @@ class RemoteControlSocket:
                 self.last_received = time.time()
         except:
             pass
-        return self.message[1:3], int(self.message[4])
+        return kine.Command(self.message[0], self.message[1]), int(self.message[4])
     def is_timeout(self):
         return time.time() - self.last_received > safety_time

@@ -38,7 +38,7 @@ hack = False
 operation = None
 
 while not button.any():
-    motorSpeeds, state = remote.receive()
+    command, state = remote.receive()
     if state == 0:
         manual = True
         hack = False
@@ -62,7 +62,8 @@ while not button.any():
         manual = False
 
     if manual and not hack:
-        robot.simpleDrive(motorSpeeds[0], motorSpeeds[1])
+        wheel_command = kine_model.computeWheelCommand(command)
+        robot.executeWheelCommand(wheel_command)
     else:
         fsm.Run()
 

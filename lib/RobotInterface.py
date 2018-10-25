@@ -285,8 +285,8 @@ class RobotInterface:
         #print( "L=%f, R=%f" % (left_speed, right_speed) )
 
     def executeWheelCommand(self, command):
-        self.simpleDrive(left_angular_vel * 180.0 / math.pi,
-            right_angular_vel * 180.0 / math.pi)
+        self.simpleDrive(command.left_angular_vel * 180.0 / math.pi,
+            command.right_angular_vel * 180.0 / math.pi)
 
     def driveForwards(self, speed):
         self.simpleDrive(abs(speed), abs(speed))
