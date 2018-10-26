@@ -23,6 +23,6 @@ class RemoteControlSocket:
                 self.last_received = time.time()
         except:
             pass
-        return kine.Command(self.message[0], self.message[1]), int(self.message[4])
+        return kine.Command(self.message[1], self.message[2]), int(self.message[4])
     def is_timeout(self):
         return time.time() - self.last_received > safety_time
