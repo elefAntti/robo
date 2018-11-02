@@ -3,7 +3,6 @@ from lib.stateChallenge1 import StateChallenge1
 from lib.stateChallenge3 import StateChallenge3
 from lib.LineFollower import LineFollower
 from lib.stateDiscs import StateDiscs
-from lib.statePillars import StatePillars
 from lib.stateChallenge4 import StateChallenge4
 from lib.stateTransit import StateTransit
 

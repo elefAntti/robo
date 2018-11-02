@@ -1,6 +1,6 @@
 from ev3dev import ev3
-from .vec2 import Vec2, Transform
-from .kinematics import Command
+from lib.vec2 import Vec2, Transform
+from lib.kinematics import Command
 import time
 import math
 
